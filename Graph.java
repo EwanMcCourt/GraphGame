@@ -1,29 +1,18 @@
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 
-public class Graph<Node> {
-
-    //Creates a Hashmap - a Node and its Edges(aka, all other nodes it is connected to).
-    private Map<Node, ArrayList<Node> > graph = new HashMap<>();
-
-
-    //Adds a node to the hashmap and creates its own arraylist of edges for it.
-    public void addNode(Node x)
-    {
-        graph.put(x, new ArrayList<Node>());
+abstract class Graph {
+    abstract void addNode(int index);
+    abstract public void addConnection(int source, int target, int weight, Boolean bidirectional);
+    public void addConnection(int source, int target, int weight) {
+        this.addConnection(source, target, weight, true);
     }
+    abstract public Double getWeight(int source, int target);
+    abstract public Path getPath(int source, int target);
 
-    //Adds an edge between two nodes.
-    public void addEdge(Node node1, Node node2){
-        graph.get(node1).add(node2);
-        graph.get(node2).add(node1);
-    }
+    abstract public Set<Integer> getNodes();
 
-    //Prints all the edges of a certain node
-    public void getEdges(Node x) {
-        System.out.println(graph.get(x));
-    }
+    abstract public Node getNode(int index);
+
+    abstract public Set<Integer> getNeighbours(int source);
 }
-
-

@@ -10,8 +10,8 @@ public class Main {
     static int target = 30;
 
     public static void main(String[] args) {
-        graph = readInput("points.txt");
-        new Dijkstra(source, graph).getPath(target).print();
+        UI ui = new UI();
+        ui.run();
     }
 
     public static Graph readInput(String filename) {

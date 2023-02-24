@@ -14,7 +14,9 @@ import java.util.ArrayList;
 
 public class UI extends Application implements View {
     List<List<Integer>> data = new ArrayList<>();
-    HashMap<Integer, Button> nodes = new HashMap<>();
+    List<Integer>  nodes = new ArrayList<>();
+    List<Integer> to_send = new ArrayList<>();
+
     public void run(){
         launch();
     }
@@ -22,6 +24,19 @@ public class UI extends Application implements View {
         data.add(Arrays.asList(0, 1, 7));
         data.add(Arrays.asList(0, 11, 5));
         data.add(Arrays.asList(0, 25, 4));
+    }
+    public void onClick(int node){
+        if (!(to_send.contains(node)) && (to_send.size() < 2)){
+            to_send.add(node);
+        }
+
+        else if (to_send.contains(node)){
+            to_send.remove(to_send.indexOf(node));
+        }
+        else if (to_send.size() >= 2){
+            System.out.println("Only 2 nodes, remove one");
+        }
+        System.out.println(to_send);
     }
 
 
@@ -37,16 +52,18 @@ public class UI extends Application implements View {
             int weight = data.get(i).get(2);
 
 
-            if (!nodes.containsKey(node1)) {
+            if (!nodes.contains(node1)) {
                 Button button1 = new Button("Node" + node1);
-                button1.setOnAction(event -> System.out.println("Weight for Nodes " + node1 + " and " + node2 + ": " + weight ));
-                nodes.put(node1, button1); // add the button to the nodes map
+                button1.setOnAction(event ->
+                        onClick(node1));
+                nodes.add(node1);
                 root.add(button1, nodes.size() - 1, 0); // add the button to the root pane
             }
-            if (!nodes.containsKey(node2)) {
+            if (!nodes.contains(node2)) {
                 Button button2 = new Button("Node" + node2);
-                button2.setOnAction(event -> System.out.println("Weight for Nodes " + node1 + " and " + node2 + ": " + weight ));
-                nodes.put(node2, button2); // add the button to the nodes map
+                button2.setOnAction(event -> onClick(node2)
+                );
+                nodes.add(node2);
                 root.add(button2, nodes.size() - 1, 0); // add the button to the root pane
             }
         }

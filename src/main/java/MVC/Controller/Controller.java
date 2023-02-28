@@ -44,6 +44,7 @@ public class Controller {
             }
         }
 
+        // https://www.tutorialspoint.com/javafx/javafx_event_handling.htm
         for (DisplayNode node : view.getNodes()) {
             node.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> clickNode(node.getIndex()));
         }

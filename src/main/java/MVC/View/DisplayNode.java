@@ -2,7 +2,7 @@ package MVC.View;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.QuadCurve;
@@ -15,6 +15,7 @@ public class DisplayNode extends Group {
     private Text label;
     private SimpleDoubleProperty centreY;
     private SimpleDoubleProperty centreX;
+    private SimpleDoubleProperty radius;
     private SimpleDoubleProperty anchorY;
     private SimpleDoubleProperty anchorX;
     private Circle highlightCircle;
@@ -28,13 +29,16 @@ public class DisplayNode extends Group {
         this.index = index;
         this.centreX = centreX;
         this.centreY = centreY;
+        this.radius = radius;
         this.anchorX = anchorX;
         this.anchorY = anchorY;
 
         StackPane pane = new StackPane();
 
-        pane.layoutXProperty().bind(centreX.subtract(radius));
-        pane.layoutYProperty().bind(centreY.subtract(radius));
+        pane.layoutXProperty().bind(centreX.subtract(pane.widthProperty().divide(2)));
+        pane.layoutYProperty().bind(centreY.subtract(pane.heightProperty().divide(2)));
+
+//        pane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
         highlightCircle = new Circle();
         highlightCircle.radiusProperty().bind(radius.multiply(1.1));
@@ -46,6 +50,8 @@ public class DisplayNode extends Group {
         nodeCircle.radiusProperty().bind(radius);
         nodeCircle.setFill(Color.PINK);
         pane.getChildren().add(nodeCircle);
+//        nodeCircle.centerXProperty().bind(centreX);
+//        nodeCircle.centerYProperty().bind(centreY);
 
         Text label = new Text(text);
         this.label = label;
@@ -116,5 +122,9 @@ public class DisplayNode extends Group {
         for (QuadCurve curve : highlightConnections.values()) {
             curve.setVisible(highlight);
         }
+    }
+
+    public void print() {
+        System.out.println("CentreX: "+centreX.getValue()+" centreY: "+centreY.getValue()+" radius: "+radius.getValue()+" anchorX: "+anchorX.getValue()+" anchorY: "+anchorY.getValue());
     }
 }

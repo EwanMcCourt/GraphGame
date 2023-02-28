@@ -19,32 +19,18 @@ public class DisplayGraph extends Pane implements GraphDisplay {
     private SimpleDoubleProperty centreX;
     private SimpleDoubleProperty centreY;
     SimpleIntegerProperty numNodes = new SimpleIntegerProperty();
-
     SimpleDoubleProperty NODE_RADIUS_SCALE_FACTOR = new SimpleDoubleProperty(0.95);
     SimpleDoubleProperty RING_RADIUS_SCALE_FACTOR = new SimpleDoubleProperty(0.95);
+    // https://math.stackexchange.com/questions/2438719/is-there-a-formula-for-the-big-radius-of-an-evenly-spaced-ring-of-circles
     DoubleBinding RING_RADIUS = new DoubleBinding() {
-        {
-            bind(numNodes);
-        }
+        {bind(numNodes);}
         @Override
-        protected double computeValue() {
-            if(displayNodes.size() == 0) {
-                return 1.0;
-            }
-            return 1.0 / (2.0 + 2.0 * Math.sin(Math.PI / numNodes.getValue()));
-        }
+        protected double computeValue() {return 1.0 / (2.0 + 2.0 * Math.sin(Math.PI / numNodes.getValue()));}
     };
     DoubleBinding NODE_RADIUS_BOUNDARY = new DoubleBinding() {
-        {
-            bind(numNodes);
-        }
+        {bind(numNodes);}
         @Override
-        protected double computeValue() {
-            if(displayNodes.size() == 0) {
-                return 1.0;
-            }
-            return 1.0 / (2.0 * (1.0 + (1.0 / Math.sin(Math.PI / numNodes.getValue()))));
-        }
+        protected double computeValue() {return 1.0 / (2.0 * (1.0 + (1.0 / Math.sin(Math.PI / numNodes.getValue()))));}
     };
     double CENTRE_POINT_RADIUS_SCALE_FACTOR = 0.2;
 
@@ -58,8 +44,6 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         centreY = new SimpleDoubleProperty();
         centreX.bind(this.widthProperty().multiply(0.5));
         centreY.bind(this.heightProperty().multiply(0.5));
-        System.out.println("CentreX: "+centreX.getValue());
-        System.out.println("CentreY: "+centreY.getValue());
     }
 
     public void populateNodes(int nodeNum) {
@@ -67,37 +51,25 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         this.displayNodes.clear();
         Color fillColour = Color.RED;
 
-        // https://math.stackexchange.com/questions/2438719/is-there-a-formula-for-the-big-radius-of-an-evenly-spaced-ring-of-circles
-//        double NODE_RADIUS_SCALE_FACTOR = 0.95;
-//        double RING_RADIUS_SCALE_FACTOR = 0.95;
-//        double RING_RADIUS = 1/(2+2*Math.sin(Math.PI/nodeNum));
-//        double NODE_RADIUS_BOUNDARY = 1/(2*(1+(1/Math.sin(Math.PI/nodeNum))));
-//        double CENTRE_POINT_RADIUS_SCALE_FACTOR = 0.2;
-
         SimpleDoubleProperty radius = new SimpleDoubleProperty();
         radius.bind(Bindings.min(this.widthProperty(), this.heightProperty()).multiply(RING_RADIUS).multiply(RING_RADIUS_SCALE_FACTOR));
-        System.out.println("Radius: "+radius.getValue());
 
         SimpleDoubleProperty nodeRadius = new SimpleDoubleProperty();
         nodeRadius.bind(Bindings.min(this.widthProperty(), this.heightProperty()).multiply(NODE_RADIUS_BOUNDARY).multiply(NODE_RADIUS_SCALE_FACTOR).multiply(RING_RADIUS_SCALE_FACTOR));
-
-        System.out.println("Node Radius: "+nodeRadius.getValue());
 
         Circle centrePoint = new Circle();
         centrePoint.centerXProperty().bind(centreX);
         centrePoint.centerYProperty().bind(centreY);
         centrePoint.radiusProperty().bind(nodeRadius.multiply(CENTRE_POINT_RADIUS_SCALE_FACTOR));
         centrePoint.setFill(Color.ORANGE);
-//        this.getChildren().add(centrePoint);
+        this.getChildren().add(centrePoint);
 
         if(nodeNum == 1) {
-            System.out.println("One Node");
-            Circle centreCircle = new Circle();
-            centreCircle.centerXProperty().bind(centreX);
-            centreCircle.centerYProperty().bind(centreY);
-            centreCircle.radiusProperty().bind(nodeRadius.multiply(0.5));
-            centreCircle.setFill(fillColour);
-//            this.getChildren().add(centreCircle);
+            SimpleDoubleProperty singleNodeRadius = new SimpleDoubleProperty();
+            singleNodeRadius.bind(Bindings.min(this.widthProperty(), this.heightProperty()).multiply(0.5).multiply(NODE_RADIUS_SCALE_FACTOR));
+            DisplayNode node = new DisplayNode(0, String.valueOf(0), centreX, centreY, singleNodeRadius, centreX, centreY);
+            displayNodes.add(node);
+            this.getChildren().add(node);
         } else {
             for(int i=0; i<nodeNum; i++) {
                 // https://math.stackexchange.com/questions/4459356/find-n-evenly-spaced-points-on-circle-with-radius-r
@@ -160,17 +132,6 @@ public class DisplayGraph extends Pane implements GraphDisplay {
 //                root.getChildren().add(nodeAnchorCircle);
 
                 DisplayNode node = new DisplayNode(i, String.valueOf(i), nodeCentreX, nodeCentreY, nodeRadius, nodeAnchorX, nodeAnchorY);
-
-//                // https://www.tutorialspoint.com/javafx/javafx_event_handling.htm
-//                //Creating the mouse event handler
-//                EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
-//                    @Override
-//                    public void handle(MouseEvent e) {
-//                        controller
-//                    }
-//                };
-//                //Adding event Filter
-//                Circle.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
 
                 displayNodes.add(node);
                 this.getChildren().add(node);

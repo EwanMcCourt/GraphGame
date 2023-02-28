@@ -19,6 +19,4 @@ public interface View {
     void toggleHighlightNode(int index);
     void setHighlightColor(int index, Color color);
     void addConnection(int index1, int index2, int weight);
-
-    void setController(Controller controller);
 }

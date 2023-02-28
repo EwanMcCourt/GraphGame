@@ -11,8 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -24,17 +23,11 @@ import java.util.List;
 
 public class FXView implements View{
     private Stage stage;
-    private Controller controller;
     private List<DisplayNode> displayGraph = new ArrayList<>();
     private DisplayGraph graph;
 
     public FXView(Stage stage) {
         this.stage = stage;
-        this.controller = controller;
-    }
-
-    public void setController(Controller controller) {
-        this.controller = controller;
     }
     public void initialise() {
         VBox root = new VBox();
@@ -46,19 +39,11 @@ public class FXView implements View{
         graphWidth.bind(scene.widthProperty());
         graphHeight.bind(scene.heightProperty());
 
-        EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent e) {
-                controller.clickNode(1);
-            }
-        };
-
         graph = new DisplayGraph(graphWidth, graphHeight);
+//        graph.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
         TextField text = new TextField();
         text.setMaxWidth(100);
-        Button buttonback = new Button("Backwards");
-        buttonback.setOnAction(e -> stage.setScene(scene));
         Button button = new Button("Populate");
         button.setOnAction(e -> graph.populateNodes(Integer.parseInt(text.getText())));
 

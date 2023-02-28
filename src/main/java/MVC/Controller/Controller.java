@@ -4,7 +4,6 @@ import Graph.Dijkstra;
 import Graph.Graph;
 import MVC.Model.Model;
 import MVC.View.*;
-import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
@@ -15,8 +14,8 @@ public class Controller {
     int source = 3;
     int target = 13;
 
-    private View view;
-    private Model model;
+    private final View view;
+    private final Model model;
 
     public Controller(View view, Model model) {
         //Initialise Model
@@ -48,10 +47,6 @@ public class Controller {
         for (DisplayNode node : view.getNodes()) {
             node.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> clickNode(node.getIndex()));
         }
-    }
-
-    public void test(int index) {
-        System.out.println("Test worked");
     }
 
     public void clickNode(int index) {

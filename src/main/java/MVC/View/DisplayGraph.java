@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DisplayGraph extends Pane implements GraphDisplay {
-    private List<DisplayNode> displayNodes = new ArrayList<>();
-    private SimpleDoubleProperty width;
-    private SimpleDoubleProperty height;
-    private SimpleDoubleProperty centreX;
-    private SimpleDoubleProperty centreY;
+    private final List<DisplayNode> displayNodes = new ArrayList<>();
+    private final SimpleDoubleProperty width;
+    private final SimpleDoubleProperty height;
+    private final SimpleDoubleProperty centreX;
+    private final SimpleDoubleProperty centreY;
     SimpleIntegerProperty numNodes = new SimpleIntegerProperty();
     SimpleDoubleProperty NODE_RADIUS_SCALE_FACTOR = new SimpleDoubleProperty(0.95);
     SimpleDoubleProperty RING_RADIUS_SCALE_FACTOR = new SimpleDoubleProperty(0.95);
@@ -49,7 +49,7 @@ public class DisplayGraph extends Pane implements GraphDisplay {
     public void populateNodes(int nodeNum) {
         this.getChildren().clear();
         this.displayNodes.clear();
-        Color fillColour = Color.RED;
+        Color fillColour = Color.PINK;
 
         SimpleDoubleProperty radius = new SimpleDoubleProperty();
         radius.bind(Bindings.min(this.widthProperty(), this.heightProperty()).multiply(RING_RADIUS).multiply(RING_RADIUS_SCALE_FACTOR));
@@ -124,14 +124,8 @@ public class DisplayGraph extends Pane implements GraphDisplay {
                 nodeAnchorX.bind(nodeAnchorXBinding);
                 nodeAnchorY.bind(nodeAnchorYBinding);
 
-//                Circle nodeAnchorCircle = new Circle();
-//                nodeAnchorCircle.radiusProperty().bind(radius.multiply(0.1));
-//                nodeAnchorCircle.centerXProperty().bind(nodeAnchorX);
-//                nodeAnchorCircle.centerYProperty().bind(nodeAnchorY);
-//                nodeAnchorCircle.setFill(Color.GREEN);
-//                root.getChildren().add(nodeAnchorCircle);
-
                 DisplayNode node = new DisplayNode(i, String.valueOf(i), nodeCentreX, nodeCentreY, nodeRadius, nodeAnchorX, nodeAnchorY);
+                node.setColor(fillColour);
 
                 displayNodes.add(node);
                 this.getChildren().add(node);

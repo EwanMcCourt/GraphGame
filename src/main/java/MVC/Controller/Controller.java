@@ -11,9 +11,6 @@ import java.io.IOException;
 
 public class Controller {
     Graph graph;
-    int source = 3;
-    int target = 13;
-
     private final View view;
     private final Model model;
 
@@ -21,6 +18,9 @@ public class Controller {
         //Initialise Model
         this.model = model;
         graph = this.model.generateGraph();
+
+        int source = 3;
+        int target = 13;
         new Dijkstra(source, graph).getPath(target).print();
 
         //Initialise View

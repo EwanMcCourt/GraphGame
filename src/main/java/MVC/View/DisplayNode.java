@@ -11,20 +11,21 @@ import javafx.scene.text.Text;
 import java.util.*;
 
 public class DisplayNode extends Group {
-    private int index;
-    private Text label;
-    private SimpleDoubleProperty centreY;
-    private SimpleDoubleProperty centreX;
-    private SimpleDoubleProperty radius;
-    private SimpleDoubleProperty anchorY;
-    private SimpleDoubleProperty anchorX;
-    private Circle highlightCircle;
+    private final int index;
+    private final Text label;
+    private final SimpleDoubleProperty centreY;
+    private final SimpleDoubleProperty centreX;
+    private final SimpleDoubleProperty radius;
+    private final SimpleDoubleProperty anchorY;
+    private final SimpleDoubleProperty anchorX;
+    private final Circle highlightCircle;
+    private final Circle nodeCircle;
     private Boolean highlight = false;
 
-    private Map<Integer,DisplayNode> neighbours = new HashMap<>();
-    private Map<Integer,QuadCurve> connections = new HashMap<>();
-    private Map<Integer,QuadCurve> highlightConnections = new HashMap<>();
-    private Map<Integer,Boolean> highlightConnection = new HashMap<>();
+    private final Map<Integer,DisplayNode> neighbours = new HashMap<>();
+    private final Map<Integer,QuadCurve> connections = new HashMap<>();
+    private final Map<Integer,QuadCurve> highlightConnections = new HashMap<>();
+    private final Map<Integer,Boolean> highlightConnection = new HashMap<>();
     public DisplayNode(int index, String text, SimpleDoubleProperty centreX, SimpleDoubleProperty centreY, SimpleDoubleProperty radius, SimpleDoubleProperty anchorX, SimpleDoubleProperty anchorY) {
         this.index = index;
         this.centreX = centreX;
@@ -42,28 +43,18 @@ public class DisplayNode extends Group {
 
         highlightCircle = new Circle();
         highlightCircle.radiusProperty().bind(radius.multiply(1.1));
-//        highlightCircle.setFill(Color.TRANSPARENT);
         highlightCircle.setVisible(highlight);
         pane.getChildren().add(highlightCircle);
 
-        Circle nodeCircle = new Circle();
+        nodeCircle = new Circle();
         nodeCircle.radiusProperty().bind(radius);
-        nodeCircle.setFill(Color.PINK);
         pane.getChildren().add(nodeCircle);
-//        nodeCircle.centerXProperty().bind(centreX);
-//        nodeCircle.centerYProperty().bind(centreY);
 
         Text label = new Text(text);
         this.label = label;
         pane.getChildren().add(label);
 
         this.getChildren().add(pane);
-
-//        Circle nodeCircle = new Circle();
-//        nodeCircle.radiusProperty().bind(radius);
-//        nodeCircle.centerXProperty().bind(centreX);
-//        nodeCircle.centerYProperty().bind(centreY);
-//        group.getChildren().add(nodeCircle);
 
         Circle nodeAnchorCircle = new Circle();
         nodeAnchorCircle.radiusProperty().bind(radius.multiply(0.1));
@@ -75,6 +66,10 @@ public class DisplayNode extends Group {
         Circle centreCircle = new Circle(5.0, Color.BLUE);
         centreCircle.centerXProperty().bind(centreX);
         centreCircle.centerYProperty().bind(centreY);
+    }
+
+    public void setColor(Color color) {
+        nodeCircle.setFill(color);
     }
 
     public void setLabel(String text) {

@@ -45,9 +45,6 @@ public class Dijkstra {
             }
             current = null;
         }
-//        System.out.println(unvisited);
-//        System.out.println(distance);
-//        System.out.println(previous);
     }
     public Path getPath(int target) {
 //        System.out.format("Trying to find path from %d to %d\n",source,target);

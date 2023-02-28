@@ -2,6 +2,7 @@ package MVC.View;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -16,7 +17,7 @@ import java.util.List;
 
 public class FXView implements View{
     private final Stage stage;
-    private DisplayGraph graph;
+    private GraphDisplay graph;
 
     public FXView(Stage stage) {
         this.stage = stage;
@@ -42,7 +43,7 @@ public class FXView implements View{
         Button testButton = new Button("Test");
         testButton.setOnAction(e -> test());
 
-        root.getChildren().addAll(testButton, button, text, graph);
+        root.getChildren().addAll(testButton, button, text, (Node) graph);
 
         stage.setScene(scene);
         stage.show();

@@ -1,5 +1,7 @@
 package MVC.View;
 
+import MVC.Model.Leaderboard;
+import MVC.Model.Player;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -14,6 +16,7 @@ import javafx.stage.Stage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Scanner;
 
 public class FXView implements View{
     private final Stage stage;
@@ -43,7 +46,13 @@ public class FXView implements View{
         Button testButton = new Button("Test");
         testButton.setOnAction(e -> test());
 
-        root.getChildren().addAll(testButton, button, text, (Node) graph);
+
+        Button playerButton = new Button("Players");
+        playerButton.setOnAction(e -> testPlayers());
+
+       // TextField leaderboardText = new TextField();
+
+        root.getChildren().addAll(testButton, playerButton,button, text, (Node) graph);
 
         stage.setScene(scene);
         stage.show();
@@ -101,5 +110,31 @@ public class FXView implements View{
                 graph.addConnection(i, j, 0);
             }
         }
+    }
+    public void testPlayers() {
+        Scanner inputReader = new Scanner(System.in);
+
+        System.out.print("Welcome, would you like to make a new player profile? (yes/no) ");
+        String input;
+        Player player;
+        do {
+            input = inputReader.nextLine();
+            if (input.equals("yes")) { //new player
+                Leaderboard.addPlayer();
+            }
+            System.out.println("What is the username of the account you wish to play as? ");
+            input = inputReader.nextLine();
+            player = Leaderboard.loadPlayer(input);
+            if (player == null)
+                System.out.print("Player does not exist, would you like to make a new player profile? (yes/no) ");
+        }
+        while (player == null); //makes sure the player is either a new one or one that exists
+
+
+        player.incrementGamesPlayed();
+        Leaderboard.savePlayers();
+        player.printDetails();
+        Leaderboard.displayTopTenPlayers();
+
     }
 }

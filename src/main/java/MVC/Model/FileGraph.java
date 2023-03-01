@@ -1,7 +1,9 @@
 package MVC.Model;
 
-import Graph.AdjacencyList;
-import Graph.Graph;
+import Graph.ALGraph;
+import Graph.GraphADT;
+import Graph.Node;
+import Graph.Point;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -16,8 +18,8 @@ public class FileGraph implements Model {
         this.filename = filename;
     }
 
-    public Graph generateGraph() {
-        Graph out = new AdjacencyList();
+    public GraphADT generateGraph() {
+        GraphADT out = new ALGraph();
         BufferedReader input;
         System.out.println("reading file");
         try {
@@ -29,7 +31,22 @@ public class FileGraph implements Model {
                 Matcher m = p.matcher(line);
                 if (m.find()) {
                     System.out.format("Adding connection from %d to %d with weight %d\n",Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)));
-                    out.addConnection(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)), true);
+
+                    Node source;
+                    if(out.getNode(Integer.parseInt(m.group(1))) == null) {
+                        source = new Point(Integer.parseInt(m.group(1)));
+                    } else {
+                        source = out.getNode(Integer.parseInt(m.group(1)));
+                    }
+
+                    Node target;
+                    if(out.getNode(Integer.parseInt(m.group(2))) == null) {
+                        target = new Point(Integer.parseInt(m.group(2)));
+                    } else {
+                        target = out.getNode(Integer.parseInt(m.group(2)));
+                    }
+
+                    out.addConnection(source, target, Integer.parseInt(m.group(3)), true);
                 }
                 line = input.readLine();
             }

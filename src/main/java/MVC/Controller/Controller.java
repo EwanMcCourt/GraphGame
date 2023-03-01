@@ -1,7 +1,8 @@
 package MVC.Controller;
 
 import Graph.Dijkstra;
-import Graph.Graph;
+import Graph.GraphADT;
+import Graph.Node;
 import MVC.Model.Model;
 import MVC.View.*;
 import javafx.scene.input.MouseEvent;
@@ -10,7 +11,7 @@ import javafx.scene.paint.Color;
 import java.io.IOException;
 
 public class Controller {
-    Graph graph;
+    GraphADT graph;
     private final View view;
     private final Model model;
 
@@ -19,8 +20,8 @@ public class Controller {
         this.model = model;
         graph = this.model.generateGraph();
 
-        int source = 3;
-        int target = 13;
+        Node source = graph.getNode(3);
+        Node target = graph.getNode(13);
         new Dijkstra(source, graph).getPath(target).print();
 
         //Initialise View
@@ -37,9 +38,9 @@ public class Controller {
 
     private void populateGraph() {
         view.populateGraph(graph.getNodes().size());
-        for (int index : graph.getNodes()) {
-            for (int neighbour : graph.getNeighbours(index)){
-                view.addConnection(index, neighbour, (int) graph.getWeight(index, neighbour));
+        for (Node node : graph.getNodes()) {
+            for (Node neighbour : graph.getNeighbours(node)){
+                view.addConnection(node.getIndex(), neighbour.getIndex(), (int) graph.getWeight(node, neighbour));
             }
         }
 

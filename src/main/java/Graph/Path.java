@@ -19,7 +19,7 @@ public class Path {
 
         double weight = 0;
         for (int i=0; i<nodes.size()-1; i++) {
-            double tempweight = nodes.get(i).getWeight(nodes.get(i+1).getIndex());
+            double tempweight = nodes.get(i).getWeight(nodes.get(i+1));
 
             if(tempweight == Double.POSITIVE_INFINITY) {
                 break;
@@ -40,7 +40,7 @@ public class Path {
 
         System.out.format("From %d to %d has weight %d\n", start, end, (int) weight);
         for (int i=0; i<nodes.size()-1; i++) {
-            System.out.format("|%03d|\n  |\n %03d\n  V\n", nodes.get(i).getIndex(), (int) nodes.get(i).getWeight(nodes.get(i+1).getIndex()));
+            System.out.format("|%03d|\n  |\n %03d\n  V\n", nodes.get(i).getIndex(), (int) nodes.get(i).getWeight(nodes.get(i+1)));
         }
         System.out.format("|%02d|\n", nodes.get(nodes.size()-1).getIndex());
     }

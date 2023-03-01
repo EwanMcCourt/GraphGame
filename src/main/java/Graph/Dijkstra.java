@@ -3,40 +3,40 @@ package Graph;
 import java.util.*;
 
 public class Dijkstra {
-    int source;
-    Graph graph;
-    Map<Integer, Double> distance = new HashMap<>();
-    Map<Integer, Integer> previous = new HashMap<>();
+    Node source;
+    GraphADT graph;
+    Map<Node, Double> distance = new HashMap<>();
+    Map<Node, Node> previous = new HashMap<>();
 
-    public Dijkstra(int source, Graph graph) {
+    public Dijkstra(Node source, GraphADT graph) {
         this.source = source;
         this.graph = graph;
-        Integer current = null;
-        ArrayList<Integer> unvisited = new ArrayList<>();
+        Node current = null;
+        ArrayList<Node> unvisited = new ArrayList<>();
 
-        for (int index : graph.getNodes()) {
-            unvisited.add(index);
-            distance.put(index, Double.POSITIVE_INFINITY);
-            previous.put(index, null);
+        for (Node node : graph.getNodes()) {
+            unvisited.add(node);
+            distance.put(node, Double.POSITIVE_INFINITY);
+            previous.put(node, null);
         }
 
         distance.put(source, (double) 0);
 
         while (!unvisited.isEmpty()) {
-            for(Integer index : unvisited) {
-                if (current == null || distance.get(current) > distance.get(index)) {
-                    current = index;
-//                    System.out.println("Current: "+current);
+            for(Node node : unvisited) {
+                if (current == null || distance.get(current) > distance.get(node)) {
+                    current = node;
+                    System.out.println("Current: "+current.getIndex());
                 }
             }
             unvisited.remove(current);
 //            if(graph.getNeighbours(current).isEmpty()) {
 //                System.out.println(current+" has no neighbours");
 //            }
-            for (int neighbour : graph.getNeighbours(current)) {
+            for (Node neighbour : graph.getNeighbours(current)) {
                 if (unvisited.contains(neighbour)) {
                     double dist = distance.get(current) + graph.getWeight(current, neighbour);
-//                    System.out.format("Distance from %d to %d is %f\n", current, neighbour, dist);
+                    System.out.format("Distance from %d to %d is %f\n", current.getIndex(), neighbour.getIndex(), dist);
                     if (dist < distance.get(neighbour)) {
                         distance.put(neighbour, dist);
                         previous.put(neighbour, current);
@@ -46,17 +46,17 @@ public class Dijkstra {
             current = null;
         }
     }
-    public Path getPath(int target) {
+    public Path getPath(Node target) {
 //        System.out.format("Trying to find path from %d to %d\n",source,target);
         LinkedList<Node> path = new LinkedList<>();
         if(source == target) {
-            path.addFirst(graph.getNode(target));
+            path.addFirst(target);
             return new Path(path);
         }
         if(previous.get(target) != null) {
-            Integer tempTarget = target;
+            Node tempTarget = target;
             while (tempTarget != null) {
-                path.addFirst(graph.getNode(tempTarget));
+                path.addFirst(tempTarget);
                 tempTarget = previous.get(tempTarget);
             }
         }

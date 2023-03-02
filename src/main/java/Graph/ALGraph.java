@@ -2,20 +2,20 @@ package Graph;
 
 import java.util.*;
 
-public class ALGraph implements GraphADT {
-    Set<Node> nodes;
+public class ALGraph<N extends Node> implements GraphADT<N> {
+    Set<N> nodes;
 
     public ALGraph() {
         nodes = new HashSet<>();
     }
 
     @Override
-    public void addNode(Node node) {
+    public void addNode(N node) {
         nodes.add(node);
     }
 
     @Override
-    public void addConnection(Node source, Node target, int weight, Boolean bidirectional) {
+    public void addConnection(N source, N target, int weight, Boolean bidirectional) {
         if(!nodes.contains(source)) { this.addNode(source); }
         if(!nodes.contains(target)) { this.addNode(target); }
         if(bidirectional) { target.addConnection(source, weight); }
@@ -23,20 +23,20 @@ public class ALGraph implements GraphADT {
     }
 
     @Override
-    public double getWeight(Node source, Node target) {
+    public double getWeight(N source, N target) {
         return source.getWeight(target);
     }
 
-    public Set<Node> getNodes() {
+    public Set<N> getNodes() {
         return nodes;
     }
 
-    public Set<Node> getNeighbours(Node source) {
-        return source.getNeighbours();
+    public Set<N> getNeighbours(N source) {
+        return (Set<N>) source.getNeighbours();
     }
 
-    public Node getNode(int index) {
-        for (Node node : nodes) {
+    public N getNode(int index) {
+        for (N node : nodes) {
             if (node.getIndex()==index) {
                 return node;
             }

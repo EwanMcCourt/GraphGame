@@ -2,19 +2,19 @@ package Graph;
 
 import java.util.*;
 
-public class Dijkstra {
-    Node source;
-    GraphADT graph;
-    Map<Node, Double> distance = new HashMap<>();
-    Map<Node, Node> previous = new HashMap<>();
+public class Dijkstra<N extends Node> {
+    N source;
+    GraphADT<N> graph;
+    Map<N, Double> distance = new HashMap<>();
+    Map<N, N> previous = new HashMap<>();
 
-    public Dijkstra(Node source, GraphADT graph) {
+    public Dijkstra(N source, GraphADT<N> graph) {
         this.source = source;
         this.graph = graph;
-        Node current = null;
-        ArrayList<Node> unvisited = new ArrayList<>();
+        N current = null;
+        ArrayList<N> unvisited = new ArrayList<>();
 
-        for (Node node : graph.getNodes()) {
+        for (N node : graph.getNodes()) {
             unvisited.add(node);
             distance.put(node, Double.POSITIVE_INFINITY);
             previous.put(node, null);
@@ -23,7 +23,7 @@ public class Dijkstra {
         distance.put(source, (double) 0);
 
         while (!unvisited.isEmpty()) {
-            for(Node node : unvisited) {
+            for(N node : unvisited) {
                 if (current == null || distance.get(current) > distance.get(node)) {
                     current = node;
 //                    System.out.println("Current: "+current.getIndex());
@@ -33,7 +33,7 @@ public class Dijkstra {
 //            if(graph.getNeighbours(current).isEmpty()) {
 //                System.out.println(current+" has no neighbours");
 //            }
-            for (Node neighbour : graph.getNeighbours(current)) {
+            for (N neighbour : graph.getNeighbours(current)) {
                 if (unvisited.contains(neighbour)) {
                     double dist = distance.get(current) + graph.getWeight(current, neighbour);
 //                    System.out.format("Distance from %d to %d is %f\n", current.getIndex(), neighbour.getIndex(), dist);
@@ -46,20 +46,20 @@ public class Dijkstra {
             current = null;
         }
     }
-    public Path getPath(Node target) {
+    public Path<N> getPath(N target) {
 //        System.out.format("Trying to find path from %d to %d\n",source,target);
-        LinkedList<Node> path = new LinkedList<>();
+        LinkedList<N> path = new LinkedList<>();
         if(source == target) {
             path.addFirst(target);
-            return new Path(path);
+            return new Path<>(path);
         }
         if(previous.get(target) != null) {
-            Node tempTarget = target;
+            N tempTarget = target;
             while (tempTarget != null) {
                 path.addFirst(tempTarget);
                 tempTarget = previous.get(tempTarget);
             }
         }
-        return new Path(path);
+        return new Path<>(path);
     }
 }

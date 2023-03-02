@@ -11,10 +11,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileGraph implements Model {
-    GraphADT graph;
+    GraphADT<Point> graph;
 
     public FileGraph(String filename) {
-        graph = new ALGraph();
+        graph = new ALGraph<>();
         BufferedReader input;
         System.out.println("reading file");
         try {
@@ -25,14 +25,14 @@ public class FileGraph implements Model {
             while (line != null) {
                 Matcher m = p.matcher(line);
                 if (m.find()) {
-                    Node source;
+                    Point source;
                     if(graph.getNode(Integer.parseInt(m.group(1))) == null) {
                         source = new Point(Integer.parseInt(m.group(1)));
                     } else {
                         source = graph.getNode(Integer.parseInt(m.group(1)));
                     }
 
-                    Node target;
+                    Point target;
                     if(graph.getNode(Integer.parseInt(m.group(2))) == null) {
                         target = new Point(Integer.parseInt(m.group(2)));
                     } else {
@@ -66,17 +66,18 @@ public class FileGraph implements Model {
 
     @Override
     public Set<Point> getPoints() {
-        Set<Node> nodes = graph.getNodes();
-        Set<Point> points = new HashSet<>();
-        for (Node node : nodes) {
-            points.add((Point) node);
-        }
-        return points;
+//        Set<Node> nodes = graph.getNodes();
+//        Set<Point> points = new HashSet<>();
+//        for (Node node : nodes) {
+//            points.add((Point) node);
+//        }
+//        return points;
+        return graph.getNodes();
     }
 
     @Override
     public Point getPoint(int index) {
-        return (Point) graph.getNode(index);
+        return graph.getNode(index);
     }
 
     @Override
@@ -87,10 +88,11 @@ public class FileGraph implements Model {
             points.add((Point) node);
         }
         return points;
+//        return source.getNeighbours();
     }
 
     @Override
-    public Path getPath(Point source, Point target) {
-        return new Dijkstra(source, graph).getPath(target);
+    public Path<Point> getPath(Point source, Point target) {
+        return new Dijkstra<>(source, graph).getPath(target);
     }
 }

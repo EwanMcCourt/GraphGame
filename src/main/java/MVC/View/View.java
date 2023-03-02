@@ -1,22 +1,25 @@
 package MVC.View;
 
-import MVC.Controller.Controller;
+import MVC.Model.Point;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
+import java.util.Set;
 
 public interface View {
     void initialise();
     void setIcon(String filename) throws IOException;
-    void populateGraph(int nodeNum);
-    List<DisplayNode> getNodes();
+    void populateGraph(Set<Point> points);
+    Collection<DisplayNode> getNodes();
     void setTitle(String title);
     void addNode();
     void removeNode();
-    void highlightNode(int index);
-    void unHighlightNode(int index);
-    void toggleHighlightNode(int index);
-    void setHighlightColor(int index, Color color);
-    void addConnection(int index1, int index2, int weight);
+    void addConnection(Point point1, Point point2, int weight);
+    void highlightNode(Point point, Boolean active);
+    void setHighlightColor(Point point, Color color);
+    Boolean isHighlighted(Point point);
+    void highlightConnection(Point point1, Point point2, Boolean active);
+    void setConnectionHighlightColor(Point point1, Point point2, Color color);
+    Boolean isConnectionHighlighted(Point point1, Point point2);
 }

@@ -1,25 +1,19 @@
 package MVC.Model;
 
-import Graph.ALGraph;
-import Graph.GraphADT;
-import Graph.Node;
-import Graph.Point;
+import Graph.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileGraph implements Model {
-    String filename;
+    GraphADT<Point> graph;
 
     public FileGraph(String filename) {
-        this.filename = filename;
-    }
-
-    public GraphADT generateGraph() {
-        GraphADT out = new ALGraph();
+        graph = new ALGraph<>();
         BufferedReader input;
         System.out.println("reading file");
         try {
@@ -30,29 +24,62 @@ public class FileGraph implements Model {
             while (line != null) {
                 Matcher m = p.matcher(line);
                 if (m.find()) {
-                    System.out.format("Adding connection from %d to %d with weight %d\n",Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)));
-
-                    Node source;
-                    if(out.getNode(Integer.parseInt(m.group(1))) == null) {
+                    Point source;
+                    if(graph.getNode(Integer.parseInt(m.group(1))) == null) {
                         source = new Point(Integer.parseInt(m.group(1)));
                     } else {
-                        source = out.getNode(Integer.parseInt(m.group(1)));
+                        source = graph.getNode(Integer.parseInt(m.group(1)));
                     }
 
-                    Node target;
-                    if(out.getNode(Integer.parseInt(m.group(2))) == null) {
+                    Point target;
+                    if(graph.getNode(Integer.parseInt(m.group(2))) == null) {
                         target = new Point(Integer.parseInt(m.group(2)));
                     } else {
-                        target = out.getNode(Integer.parseInt(m.group(2)));
+                        target = graph.getNode(Integer.parseInt(m.group(2)));
                     }
 
-                    out.addConnection(source, target, Integer.parseInt(m.group(3)), true);
+                    graph.addConnection(source, target, Integer.parseInt(m.group(3)), true);
+//                    System.out.format("Adding connection from %d to %d with weight %d\n",Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)));
                 }
                 line = input.readLine();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return out;
+    }
+
+    @Override
+    public void addPoint(Point point) {
+        graph.addNode(point);
+    }
+
+    @Override
+    public void addConnection(Point source, Point target, int weight, Boolean bidirectional) {
+        graph.addConnection(source, target, weight, bidirectional);
+    }
+
+    @Override
+    public double getWeight(Point source, Point target) {
+        return source.getWeight(target);
+    }
+
+    @Override
+    public Set<Point> getPoints() {
+        return graph.getNodes();
+    }
+
+    @Override
+    public Point getPoint(int index) {
+        return graph.getNode(index);
+    }
+
+    @Override
+    public Set<Point> getNeighbours(Point source) {
+        return source.getNeighbours();
+    }
+
+    @Override
+    public Path<Point> getPath(Point source, Point target) {
+        return new Dijkstra<>(source, graph).getPath(target);
     }
 }

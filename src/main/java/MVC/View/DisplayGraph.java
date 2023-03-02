@@ -1,5 +1,6 @@
 package MVC.View;
 
+import MVC.Model.Point;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -9,34 +10,28 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.QuadCurve;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class DisplayGraph extends Pane implements GraphDisplay {
-    private final List<DisplayNode> displayNodes = new ArrayList<>();
-    private final SimpleDoubleProperty width;
-    private final SimpleDoubleProperty height;
-    private final SimpleDoubleProperty centreX;
-    private final SimpleDoubleProperty centreY;
-    SimpleIntegerProperty numNodes = new SimpleIntegerProperty();
-    SimpleDoubleProperty NODE_RADIUS_SCALE_FACTOR = new SimpleDoubleProperty(0.95);
-    SimpleDoubleProperty RING_RADIUS_SCALE_FACTOR = new SimpleDoubleProperty(0.95);
+    private final Map<Point, DisplayNode> displayNodes = new HashMap<>();
+    private final SimpleDoubleProperty centreX, centreY;
+    private final SimpleIntegerProperty numNodes = new SimpleIntegerProperty();
+    private final static SimpleDoubleProperty NODE_RADIUS_SCALE_FACTOR = new SimpleDoubleProperty(0.95);
+    private final static SimpleDoubleProperty RING_RADIUS_SCALE_FACTOR = new SimpleDoubleProperty(0.95);
     // https://math.stackexchange.com/questions/2438719/is-there-a-formula-for-the-big-radius-of-an-evenly-spaced-ring-of-circles
-    DoubleBinding RING_RADIUS = new DoubleBinding() {
+    private final DoubleBinding RING_RADIUS = new DoubleBinding() {
         {bind(numNodes);}
         @Override
         protected double computeValue() {return 1.0 / (2.0 + 2.0 * Math.sin(Math.PI / numNodes.getValue()));}
     };
-    DoubleBinding NODE_RADIUS_BOUNDARY = new DoubleBinding() {
+    private final DoubleBinding NODE_RADIUS_BOUNDARY = new DoubleBinding() {
         {bind(numNodes);}
         @Override
         protected double computeValue() {return 1.0 / (2.0 * (1.0 + (1.0 / Math.sin(Math.PI / numNodes.getValue()))));}
     };
-    double CENTRE_POINT_RADIUS_SCALE_FACTOR = 0.2;
+    private final static double CENTRE_POINT_RADIUS_SCALE_FACTOR = 0.2;
 
     public DisplayGraph(SimpleDoubleProperty width, SimpleDoubleProperty height) {
-        this.width = width;
-        this.height = height;
         this.prefWidthProperty().bind(width);
         this.prefHeightProperty().bind(height);
 
@@ -46,7 +41,7 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         centreY.bind(this.heightProperty().multiply(0.5));
     }
 
-    public void populateNodes(int nodeNum) {
+    public void populateNodes(Set<Point> points) {
         this.getChildren().clear();
         this.displayNodes.clear();
         Color fillColour = Color.PINK;
@@ -62,19 +57,22 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         centrePoint.centerYProperty().bind(centreY);
         centrePoint.radiusProperty().bind(nodeRadius.multiply(CENTRE_POINT_RADIUS_SCALE_FACTOR));
         centrePoint.setFill(Color.ORANGE);
-        this.getChildren().add(centrePoint);
+//        this.getChildren().add(centrePoint);
 
-        if(nodeNum == 1) {
+        Iterator<Point> pointIterator = points.iterator();
+
+        if(points.size() == 1) {
             SimpleDoubleProperty singleNodeRadius = new SimpleDoubleProperty();
             singleNodeRadius.bind(Bindings.min(this.widthProperty(), this.heightProperty()).multiply(0.5).multiply(NODE_RADIUS_SCALE_FACTOR));
-            DisplayNode node = new DisplayNode(0, String.valueOf(0), centreX, centreY, singleNodeRadius, centreX, centreY);
-            displayNodes.add(node);
+            Point point = pointIterator.next();
+            DisplayNode node = new DisplayNode(point, String.valueOf(point.getIndex()), centreX, centreY, singleNodeRadius, centreX, centreY);
+            displayNodes.put(point,node);
             this.getChildren().add(node);
         } else {
-            for(int i=0; i<nodeNum; i++) {
+            for(int i=0; i< points.size(); i++) {
                 // https://math.stackexchange.com/questions/4459356/find-n-evenly-spaced-points-on-circle-with-radius-r
-//                double theta = (i*((2*Math.PI)/nodeNum))-(Math.PI/2);
-                double theta = (i*((2*Math.PI)/nodeNum));
+//                double theta = (i*((2*Math.PI)/points.size()))-(Math.PI/2);
+                double theta = (i*((2*Math.PI)/points.size()));
                 SimpleDoubleProperty nodeCentreX = new SimpleDoubleProperty();
                 SimpleDoubleProperty nodeCentreY = new SimpleDoubleProperty();
                 nodeCentreX.bind(centreX.add(radius.multiply(Math.cos(theta))));
@@ -124,57 +122,55 @@ public class DisplayGraph extends Pane implements GraphDisplay {
                 nodeAnchorX.bind(nodeAnchorXBinding);
                 nodeAnchorY.bind(nodeAnchorYBinding);
 
-                DisplayNode node = new DisplayNode(i, String.valueOf(i), nodeCentreX, nodeCentreY, nodeRadius, nodeAnchorX, nodeAnchorY);
+                Point point = pointIterator.next();
+
+                DisplayNode node = new DisplayNode(point, String.valueOf(point.getIndex()), nodeCentreX, nodeCentreY, nodeRadius, nodeAnchorX, nodeAnchorY);
                 node.setColor(fillColour);
 
-                displayNodes.add(node);
-                this.getChildren().add(node);
+                displayNodes.put(point, node);
+                this.getChildren().addAll(node);
             }
         }
         update();
     }
 
-    public List<DisplayNode> getDisplayNodes() {
-        return displayNodes;
+    public Collection<DisplayNode> getDisplayNodes() {
+        return displayNodes.values();
     }
 
     private void update() {
         numNodes.set(displayNodes.size());
     }
 
-    public int getNodeNum() {
-        return displayNodes.size();
-    }
-
-    public void addConnection(int index1, int index2, int weight) {
-        QuadCurve curve = createCurve(index1, index2);
+    public void addConnection(Point point1, Point point2, int weight) {
+        QuadCurve curve = createCurve(point1, point2);
 
         curve.setFill(Color.TRANSPARENT);
         curve.setStroke(getWeightColor(weight));
 
-        QuadCurve highlightCurve = createCurve(index1, index2);
+        QuadCurve highlightCurve = createCurve(point1, point2);
         highlightCurve.setFill(Color.TRANSPARENT);
         highlightCurve.setStroke(Color.SKYBLUE);
         highlightCurve.setStrokeWidth(5.0);
         highlightCurve.setVisible(false);
 
-        displayNodes.get(index1).addConnection(index2, displayNodes.get(index2), curve, highlightCurve);
-        displayNodes.get(index2).addConnection(index1, displayNodes.get(index1), curve, highlightCurve);
+        displayNodes.get(point1).addConnection(point2, displayNodes.get(point2), curve, highlightCurve);
+        displayNodes.get(point2).addConnection(point1, displayNodes.get(point1), curve, highlightCurve);
 
         this.getChildren().addAll(highlightCurve, curve);
     }
 
-    private QuadCurve createCurve(int index1, int index2) {
+    private QuadCurve createCurve(Point point1, Point point2) {
         QuadCurve curve = new QuadCurve();
 
         curve.controlXProperty().bind(centreX);
         curve.controlYProperty().bind(centreY);
 
-        curve.startXProperty().bind(displayNodes.get(index1).getAnchorX());
-        curve.startYProperty().bind(displayNodes.get(index1).getAnchorY());
+        curve.startXProperty().bind(displayNodes.get(point1).getAnchorX());
+        curve.startYProperty().bind(displayNodes.get(point1).getAnchorY());
 
-        curve.endXProperty().bind(displayNodes.get(index2).getAnchorX());
-        curve.endYProperty().bind(displayNodes.get(index2).getAnchorY());
+        curve.endXProperty().bind(displayNodes.get(point2).getAnchorX());
+        curve.endYProperty().bind(displayNodes.get(point2).getAnchorY());
 
         return curve;
     }
@@ -200,16 +196,23 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         return colors.get(weight);
     }
 
-    public void highlight(int index) {
-        displayNodes.get(index).setHighlight(true);
+    public void highlight(Point point, Boolean active) {
+        displayNodes.get(point).setHighlight(active);
     }
-    public void unhighlight(int index) {
-        displayNodes.get(index).setHighlight(false);
+    public void setHighlightColor(Point point, Color color) {
+        displayNodes.get(point).setHighlightColor(color);
     }
-    public void toggleHighlight(int index) {
-        displayNodes.get(index).toggleHighlight();
+
+    public Boolean isHighlighted(Point point) {
+        return displayNodes.get(point).isHighlighted();
     }
-    public void setHighlightColor(int index, Color color) {
-        displayNodes.get(index).setHighlightColor(color);
+    public void highlightConnection(Point point1, Point point2, Boolean active) {
+        displayNodes.get(point1).setConnectionHighlight(point2, active);
+    }
+    public void setConnectionHighlightColor(Point point1, Point point2, Color color) {
+        displayNodes.get(point1).setConnectionHighlightColor(point2, color);
+    }
+    public Boolean isConnectionHighlighted(Point point1, Point point2) {
+        return displayNodes.get(point1).isConnectionHighlighted(point2);
     }
 }

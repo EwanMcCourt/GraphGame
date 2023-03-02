@@ -2,14 +2,14 @@ package Graph;
 
 import java.util.LinkedList;
 
-public class Path {
-    Node start;
-    Node end;
+public class Path<N extends Node> {
+    N start;
+    N end;
     double weight=Double.POSITIVE_INFINITY;
-    LinkedList<Node> nodes;
+    LinkedList<N> nodes;
 
 
-    public Path(LinkedList<Node> nodes) {
+    public Path(LinkedList<N> nodes) {
         this.nodes = nodes;
         if(nodes.isEmpty()) {
             return;

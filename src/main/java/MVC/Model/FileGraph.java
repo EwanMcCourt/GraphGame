@@ -65,12 +65,6 @@ public class FileGraph implements Model {
 
     @Override
     public Set<Point> getPoints() {
-//        Set<Node> nodes = graph.getNodes();
-//        Set<Point> points = new HashSet<>();
-//        for (Node node : nodes) {
-//            points.add((Point) node);
-//        }
-//        return points;
         return graph.getNodes();
     }
 
@@ -81,12 +75,6 @@ public class FileGraph implements Model {
 
     @Override
     public Set<Point> getNeighbours(Point source) {
-//        Set<Node> nodes = source.getNeighbours();
-//        Set<Point> points = new HashSet<>();
-//        for (Node node : nodes) {
-//            points.add((Point) node);
-//        }
-//        return points;
         return source.getNeighbours();
     }
 

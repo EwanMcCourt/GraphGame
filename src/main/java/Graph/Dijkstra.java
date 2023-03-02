@@ -1,8 +1,11 @@
 package Graph;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
-public class Dijkstra<N extends Node> {
+public class Dijkstra<N extends Node<N>> {
     N source;
     GraphADT<N> graph;
     Map<N, Double> distance = new HashMap<>();

@@ -2,7 +2,3 @@ Ewan 17
 NotEwan 1
 Kyle 0
 john 0
-B 0
-no 0
-Edward 2
-MrTestMan 1

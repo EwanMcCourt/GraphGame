@@ -10,40 +10,28 @@ public class Leaderboard{
     static File file = new File("src/main/resources/MVC/Model/leaderboard.txt");
 
 
-    public static void addPlayer() {
+    public static void addPlayer(String givenUsername) {
         Leaderboard.loadPlayers();
-        Scanner scan = new Scanner(System.in);
 
         FileWriter writing = null;
         try {
-            Scanner input = new Scanner(file);
+
             writing = new FileWriter(file, true);
+
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line = reader.readLine();
 
 
-            System.out.println("Please enter your unique username");
-            String username = scan.nextLine();
-            while (username.length() == 0){
-                System.out.println("Invalid input, please try again");
-                username = scan.nextLine();
-            }
 
-            //Checks if username already exists
-            while (input.hasNext()) {
-                String check = input.next();
-                while (username.equals(check)) {
-                    System.out.println("This username exists already, please try again");
-                    username = scan.nextLine();
+                //Checks if players file is empty before writing to a new line
+                if (line == null) {
+                    writing.append( givenUsername + " " + 0 );
+                } else {
+                    writing.append("\n" + givenUsername + " " +0 );
                 }
-            }
 
-            //Checks if players file is empty before writing to a new line
-            if (line == null) {
-                writing.append( username + " " + 0 );
-            } else {
-                writing.append("\n" + username + " " +0 );
-            }
+
+
             writing.close();
         } catch (IOException e) {
             e.printStackTrace();

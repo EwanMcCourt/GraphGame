@@ -69,8 +69,13 @@ public class FXView implements View{
 
         TextField loginText = new TextField();
         loginText.setMaxWidth(100);
-        Button loginButton = new Button("login");
+        Button loginButton = new Button("Login");
         loginButton.setOnAction(e -> login(loginText.getText()));
+
+        TextField registerText = new TextField();
+        registerText.setMaxWidth(100);
+        Button registerButton = new Button("Register");
+        registerButton.setOnAction(e -> register(registerText.getText()));
 
 
         leaderboardTextArea = new TextArea();
@@ -89,7 +94,7 @@ public class FXView implements View{
 
 
 
-        root.getChildren().addAll(testButton,button, text, loginButton,loginText,(Node) graph,leaderboardTextArea);
+        root.getChildren().addAll(testButton,button, text, loginButton,loginText,registerButton, registerText,(Node) graph,leaderboardTextArea);
 
         stage.setScene(scene);
         stage.show();
@@ -169,6 +174,28 @@ public class FXView implements View{
             alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText("Login Successful");
             alert.setContentText("You are now logged in as " + givenUsername);
+            alert.show();
+
+        }
+    }
+
+    public void register(String givenUsername) {
+        Player player;
+        Alert alert;
+        List<Player> players;
+        player = Leaderboard.loadPlayer(givenUsername);
+        players = Leaderboard.loadPlayers();
+        System.out.println(players.contains(player));
+        if (players.contains(player)){
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Input not valid");
+            alert.setContentText("This user already exists. Please enter a unique username.");
+            alert.showAndWait();
+        }else{
+            Leaderboard.addPlayer(givenUsername);
+            alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("Registration Successful");
+            alert.setContentText("You have now registered the account: " + givenUsername);
             alert.show();
 
         }

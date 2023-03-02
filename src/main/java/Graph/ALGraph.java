@@ -16,15 +16,9 @@ public class ALGraph implements GraphADT {
 
     @Override
     public void addConnection(Node source, Node target, int weight, Boolean bidirectional) {
-        if(!nodes.contains(source)) {
-            this.addNode(source);
-        }
-        if(!nodes.contains(target)) {
-            this.addNode(target);
-        }
-        if(bidirectional) {
-            target.addConnection(source, weight);
-        }
+        if(!nodes.contains(source)) { this.addNode(source); }
+        if(!nodes.contains(target)) { this.addNode(target); }
+        if(bidirectional) { target.addConnection(source, weight); }
         source.addConnection(target, weight);
     }
 
@@ -49,7 +43,6 @@ public class ALGraph implements GraphADT {
         }
         return null;
     }
-
 }
 
 

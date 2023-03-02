@@ -1,4 +1,6 @@
-package Graph;
+package MVC.Model;
+
+import Graph.Node;
 
 import java.util.HashMap;
 import java.util.Set;

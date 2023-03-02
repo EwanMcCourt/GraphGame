@@ -26,7 +26,7 @@ public class Dijkstra {
             for(Node node : unvisited) {
                 if (current == null || distance.get(current) > distance.get(node)) {
                     current = node;
-                    System.out.println("Current: "+current.getIndex());
+//                    System.out.println("Current: "+current.getIndex());
                 }
             }
             unvisited.remove(current);
@@ -36,7 +36,7 @@ public class Dijkstra {
             for (Node neighbour : graph.getNeighbours(current)) {
                 if (unvisited.contains(neighbour)) {
                     double dist = distance.get(current) + graph.getWeight(current, neighbour);
-                    System.out.format("Distance from %d to %d is %f\n", current.getIndex(), neighbour.getIndex(), dist);
+//                    System.out.format("Distance from %d to %d is %f\n", current.getIndex(), neighbour.getIndex(), dist);
                     if (dist < distance.get(neighbour)) {
                         distance.put(neighbour, dist);
                         previous.put(neighbour, current);
@@ -60,7 +60,6 @@ public class Dijkstra {
                 tempTarget = previous.get(tempTarget);
             }
         }
-
         return new Path(path);
     }
 }

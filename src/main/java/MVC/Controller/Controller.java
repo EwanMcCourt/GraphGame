@@ -1,9 +1,7 @@
 package MVC.Controller;
 
-import Graph.Dijkstra;
-import Graph.GraphADT;
-import Graph.Node;
 import MVC.Model.Model;
+import MVC.Model.Point;
 import MVC.View.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -11,18 +9,16 @@ import javafx.scene.paint.Color;
 import java.io.IOException;
 
 public class Controller {
-    GraphADT graph;
     private final View view;
     private final Model model;
 
     public Controller(View view, Model model) {
         //Initialise Model
         this.model = model;
-        graph = this.model.generateGraph();
 
-        Node source = graph.getNode(3);
-        Node target = graph.getNode(13);
-        new Dijkstra(source, graph).getPath(target).print();
+        Point source = this.model.getPoint(3);
+        Point target = this.model.getPoint(13);
+        model.getPath(source, target).print();
 
         //Initialise View
         this.view = view;
@@ -37,21 +33,21 @@ public class Controller {
     }
 
     private void populateGraph() {
-        view.populateGraph(graph.getNodes().size());
-        for (Node node : graph.getNodes()) {
-            for (Node neighbour : graph.getNeighbours(node)){
-                view.addConnection(node.getIndex(), neighbour.getIndex(), (int) graph.getWeight(node, neighbour));
+        view.populateGraph(model.getPoints());
+        for (Point point : model.getPoints()) {
+            for (Point neighbour : model.getNeighbours(point)){
+                view.addConnection(point, neighbour, (int) model.getWeight(point, neighbour));
             }
         }
 
         // https://www.tutorialspoint.com/javafx/javafx_event_handling.htm
         for (DisplayNode node : view.getNodes()) {
-            node.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> clickNode(node.getIndex()));
+            node.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> clickPoint(node.getPoint()));
         }
     }
 
-    public void clickNode(int index) {
-        view.setHighlightColor(index, Color.GREEN);
-        view.toggleHighlightNode(index);
+    public void clickPoint(Point point) {
+        view.setHighlightColor(point, Color.GREEN);
+        view.toggleHighlightNode(point);
     }
 }

@@ -2,25 +2,32 @@ package MVC.View;
 
 import MVC.Model.Leaderboard;
 import MVC.Model.Player;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class FXView implements View{
     private final Stage stage;
     private GraphDisplay graph;
+    private TextArea leaderboardTextArea;
+    private ArrayList topPlayers;
 
     public FXView(Stage stage) {
         this.stage = stage;
@@ -47,16 +54,35 @@ public class FXView implements View{
         testButton.setOnAction(e -> test());
 
 
-        Button playerButton = new Button("Players");
-        playerButton.setOnAction(e -> testPlayers());
+        TextField loginText = new TextField();
+        loginText.setMaxWidth(100);
+        Button loginButton = new Button("login");
+        loginButton.setOnAction(e -> login(loginText.getText()));
 
-       // TextField leaderboardText = new TextField();
 
-        root.getChildren().addAll(testButton, playerButton,button, text, (Node) graph);
+        leaderboardTextArea = new TextArea();
+        leaderboardTextArea.setEditable(false);
+        leaderboardTextArea.setMouseTransparent(true);
+        leaderboardTextArea.setFocusTraversable(false);
+        leaderboardTextArea.appendText("LEADERBOARD:");
+        topPlayers = Leaderboard.getTopTenPlayers();
+        for (int i =0; i<topPlayers.size(); i++){
+            leaderboardTextArea.appendText("\n"+topPlayers.get(i));
+
+        }
+        leaderboardTextArea.setPrefSize(5,500);//change to dynamically size
+        leaderboardTextArea.setMaxWidth(100);
+        leaderboardTextArea.setMaxHeight(500);
+
+
+
+        root.getChildren().addAll(testButton,button, text, loginButton,loginText,(Node) graph,leaderboardTextArea);
 
         stage.setScene(scene);
         stage.show();
     }
+
+
 
     public void populateGraph(int nodeNum) {
         graph.populateNodes(nodeNum);
@@ -110,31 +136,27 @@ public class FXView implements View{
                 graph.addConnection(i, j, 0);
             }
         }
+
     }
-    public void testPlayers() {
-        Scanner inputReader = new Scanner(System.in);
 
-        System.out.print("Welcome, would you like to make a new player profile? (yes/no) ");
-        String input;
+
+    public void login(String givenUsername) {
+
         Player player;
-        do {
-            input = inputReader.nextLine();
-            if (input.equals("yes")) { //new player
-                Leaderboard.addPlayer();
-            }
-            System.out.println("What is the username of the account you wish to play as? ");
-            input = inputReader.nextLine();
-            player = Leaderboard.loadPlayer(input);
-            if (player == null)
-                System.out.print("Player does not exist, would you like to make a new player profile? (yes/no) ");
+        Alert alert;
+
+        player = Leaderboard.loadPlayer(givenUsername);
+        if (player == null){
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Input not valid");
+            alert.setContentText("This user does not exist. If you want to create a new user, please register.");
+            alert.showAndWait();
+        }else{
+            alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("Login Successful");
+            alert.setContentText("You are now logged in as " + givenUsername);
+            alert.show();
+
         }
-        while (player == null); //makes sure the player is either a new one or one that exists
-
-
-        player.incrementGamesPlayed();
-        Leaderboard.savePlayers();
-        player.printDetails();
-        Leaderboard.displayTopTenPlayers();
-
     }
 }

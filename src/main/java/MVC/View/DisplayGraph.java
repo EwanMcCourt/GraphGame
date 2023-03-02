@@ -38,7 +38,7 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         this.width = width;
         this.height = height;
         this.prefWidthProperty().bind(width);
-        this.prefHeightProperty().bind(width);
+        this.prefHeightProperty().bind(height);
 
         centreX = new SimpleDoubleProperty();
         centreY = new SimpleDoubleProperty();

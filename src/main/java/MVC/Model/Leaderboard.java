@@ -1,8 +1,10 @@
 package MVC.Model;
+import MVC.View.FXView;
+
 import java.io.*;
 import java.util.*;
 
-public class Leaderboard {
+public class Leaderboard{
     static List<Player> leaderboard = new ArrayList<>();
 
     static File file = new File("src/main/resources/MVC/Model/leaderboard.txt");
@@ -66,7 +68,7 @@ public class Leaderboard {
         }
     }
 
-    //Currently, loads players unordered
+
     public static List<Player> loadPlayers() {
         try {
             leaderboard.clear();
@@ -88,10 +90,11 @@ public class Leaderboard {
         return leaderboard;
     }
 
-    //Currently, displays players unordered
-    public static void displayTopTenPlayers() {
 
-        List<Player> topPlayers = new ArrayList<>();
+    public static ArrayList getTopTenPlayers() {
+
+        List<Player> allPlayers = new ArrayList<>();
+        ArrayList<String> topPlayers = new ArrayList<>();
         try {
             Scanner input = new Scanner(file);
             while (input.hasNext()) {
@@ -101,26 +104,29 @@ public class Leaderboard {
 
                 int gamesPlayed = input.nextInt();
 
-                topPlayers.add(new Player( username, gamesPlayed));
+                allPlayers.add(new Player( username, gamesPlayed));
             }
             input.close();
 
         } catch (InputMismatchException | FileNotFoundException e) {
             System.err.format("Sorry, either the file does not exist or a vital component from them is missing\n");
         }
-        topPlayers.sort(Comparator.comparing(Player::getGamesPlayed, Comparator.reverseOrder()));
-        if (topPlayers.size()<10){
-            System.out.println("The top ten players are: ");
-            for (int i = 0; i < topPlayers.size(); i++) {
-                System.out.println(topPlayers.get(i));
+        allPlayers.sort(Comparator.comparing(Player::getGamesPlayed, Comparator.reverseOrder()));
+        if (allPlayers.size()<10){
+
+            for (int i = 0; i < allPlayers.size(); i++) {
+
+                topPlayers.add(allPlayers.get(i).toString());
+
             }
         }else{
 
-            System.out.println("The top ten players are: ");
+
             for (int i = 0; i < 10; i++) {
-                System.out.println(topPlayers.get(i));
+                topPlayers.add(allPlayers.get(i).toString());
             }
         }
+        return topPlayers;
     }
 
 
@@ -147,4 +153,9 @@ public class Leaderboard {
 
         return playerInfo;
     }
+
+
+
+
+
 }

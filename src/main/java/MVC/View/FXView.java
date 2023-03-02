@@ -183,10 +183,12 @@ public class FXView implements View{
         Player player;
         Alert alert;
         List<Player> players;
+        givenUsername =givenUsername.replaceAll("\\s+","");
+        System.out.println(givenUsername);
         player = Leaderboard.loadPlayer(givenUsername);
         players = Leaderboard.loadPlayers();
-        System.out.println(players.contains(player));
-        if (players.contains(player)){
+
+        if (players.contains(player) || givenUsername.isEmpty()){
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("Input not valid");
             alert.setContentText("This user already exists. Please enter a unique username.");

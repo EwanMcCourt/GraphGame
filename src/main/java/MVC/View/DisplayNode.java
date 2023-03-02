@@ -1,5 +1,6 @@
 package MVC.View;
 
+import MVC.Model.Point;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.layout.*;
@@ -11,23 +12,15 @@ import javafx.scene.text.Text;
 import java.util.*;
 
 public class DisplayNode extends Group {
-    private final int index;
+    private final Point point;
     private final Text label;
-    private final SimpleDoubleProperty centreY;
-    private final SimpleDoubleProperty centreX;
-    private final SimpleDoubleProperty radius;
-    private final SimpleDoubleProperty anchorY;
-    private final SimpleDoubleProperty anchorX;
-    private final Circle highlightCircle;
-    private final Circle nodeCircle;
-    private Boolean highlight = false;
-
-    private final Map<Integer,DisplayNode> neighbours = new HashMap<>();
-    private final Map<Integer,QuadCurve> connections = new HashMap<>();
-    private final Map<Integer,QuadCurve> highlightConnections = new HashMap<>();
-    private final Map<Integer,Boolean> highlightConnection = new HashMap<>();
-    public DisplayNode(int index, String text, SimpleDoubleProperty centreX, SimpleDoubleProperty centreY, SimpleDoubleProperty radius, SimpleDoubleProperty anchorX, SimpleDoubleProperty anchorY) {
-        this.index = index;
+    private final SimpleDoubleProperty centreY, centreX, radius, anchorY, anchorX;
+    private final Circle highlightCircle, nodeCircle;
+    private final Map<Point,DisplayNode> neighbours = new HashMap<>();
+    private final Map<Point,QuadCurve> connections = new HashMap<>();
+    private final Map<Point,QuadCurve> highlightConnections = new HashMap<>();
+    public DisplayNode(Point point, String text, SimpleDoubleProperty centreX, SimpleDoubleProperty centreY, SimpleDoubleProperty radius, SimpleDoubleProperty anchorX, SimpleDoubleProperty anchorY) {
+        this.point = point;
         this.centreX = centreX;
         this.centreY = centreY;
         this.radius = radius;
@@ -35,6 +28,7 @@ public class DisplayNode extends Group {
         this.anchorY = anchorY;
 
         StackPane pane = new StackPane();
+        pane.setPickOnBounds(false);
 
         pane.layoutXProperty().bind(centreX.subtract(pane.widthProperty().divide(2)));
         pane.layoutYProperty().bind(centreY.subtract(pane.heightProperty().divide(2)));
@@ -43,7 +37,7 @@ public class DisplayNode extends Group {
 
         highlightCircle = new Circle();
         highlightCircle.radiusProperty().bind(radius.multiply(1.1));
-        highlightCircle.setVisible(highlight);
+        highlightCircle.setVisible(false);
         pane.getChildren().add(highlightCircle);
 
         nodeCircle = new Circle();
@@ -87,36 +81,42 @@ public class DisplayNode extends Group {
     public SimpleDoubleProperty getAnchorY() {
         return anchorY;
     }
-
+    public Point getPoint() {
+        return point;
+    }
+    public void addConnection(Point target, DisplayNode node, QuadCurve curve, QuadCurve highlightCurve) {
+        neighbours.put(target, node);
+        connections.put(target, curve);
+        highlightConnections.put(target, highlightCurve);
+    }
     public void setHighlight(Boolean highlight) {
-        this.highlight = highlight;
         highlightCircle.setVisible(highlight);
-        highlightConnections();
     }
     public void toggleHighlight() {
-        setHighlight(!highlight);
+        setHighlight(!highlightCircle.isVisible());
     }
     public void setHighlightColor(Color color) {
         highlightCircle.setFill(color);
     }
-    public int getIndex() {
-        return index;
-    }
-    public void addConnection(int target, DisplayNode node, QuadCurve curve, QuadCurve highlightCurve) {
-        neighbours.put(target, node);
-        connections.put(target, curve);
-        highlightConnections.put(target, highlightCurve);
-        highlightConnection.put(target, false);
-    }
-
-    public void highlightConnection(int target) {
-        highlightConnection.put(target, true);
-        highlightConnections.get(target).setVisible(highlightConnection.get(target));
+    public Boolean isHighlighted() {
+        return highlightCircle.isVisible();
     }
     public void highlightConnections() {
         for (QuadCurve curve : highlightConnections.values()) {
-            curve.setVisible(highlight);
+            curve.setVisible(true);
         }
+    }
+    public void setConnectionHighlight(Point target, Boolean highlight) {
+        highlightConnections.get(target).setVisible(highlight);
+    }
+    public void toggleConnectionHighlight(Point target) {
+        setConnectionHighlight(target, !highlightConnections.get(target).isVisible());
+    }
+    public void setConnectionHighlightColor(Point target, Color color) {
+        highlightConnections.get(target).setStroke(color);
+    }
+    public Boolean isConnectionHighlighted(Point target) {
+        return highlightConnections.get(target).isVisible();
     }
 
     public void print() {

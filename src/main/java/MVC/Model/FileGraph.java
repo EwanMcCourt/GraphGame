@@ -5,7 +5,6 @@ import Graph.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,13 +81,13 @@ public class FileGraph implements Model {
 
     @Override
     public Set<Point> getNeighbours(Point source) {
-        Set<Node> nodes = source.getNeighbours();
-        Set<Point> points = new HashSet<>();
-        for (Node node : nodes) {
-            points.add((Point) node);
-        }
-        return points;
-//        return source.getNeighbours();
+//        Set<Node> nodes = source.getNeighbours();
+//        Set<Point> points = new HashSet<>();
+//        for (Node node : nodes) {
+//            points.add((Point) node);
+//        }
+//        return points;
+        return source.getNeighbours();
     }
 
     @Override

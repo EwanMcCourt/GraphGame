@@ -87,20 +87,23 @@ public class FXView implements View{
 
     }
 
-    public void highlightNode(Point point) {
-        graph.highlight(point);
+    public void highlightNode(Point point, Boolean active) {
+        graph.highlight(point, active);
     }
-
-    public void unHighlightNode(Point point) {
-        graph.unhighlight(point);
-    }
-
-    public void toggleHighlightNode(Point point) {
-        graph.toggleHighlight(point);
-    }
-
     public void setHighlightColor(Point point, Color color) {
         graph.setHighlightColor(point, color);
+    }
+    public Boolean isHighlighted(Point point1) {
+        return graph.isHighlighted(point1);
+    }
+    public void highlightConnection(Point point1, Point point2, Boolean active) {
+        graph.highlightConnection(point1, point2, active);
+    }
+    public void setConnectionHighlightColor(Point point1, Point point2, Color color) {
+        graph.setConnectionHighlightColor(point1, point2, color);
+    }
+    public Boolean isConnectionHighlighted(Point point1, Point point2) {
+        return graph.isConnectionHighlighted(point1, point2);
     }
 
     public void addConnection(Point point1, Point point2, int weight) {

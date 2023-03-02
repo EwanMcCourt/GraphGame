@@ -196,16 +196,23 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         return colors.get(weight);
     }
 
-    public void highlight(Point point) {
-        displayNodes.get(point).setHighlight(true);
-    }
-    public void unhighlight(Point point) {
-        displayNodes.get(point).setHighlight(false);
-    }
-    public void toggleHighlight(Point point) {
-        displayNodes.get(point).toggleHighlight();
+    public void highlight(Point point, Boolean active) {
+        displayNodes.get(point).setHighlight(active);
     }
     public void setHighlightColor(Point point, Color color) {
         displayNodes.get(point).setHighlightColor(color);
+    }
+
+    public Boolean isHighlighted(Point point) {
+        return displayNodes.get(point).isHighlighted();
+    }
+    public void highlightConnection(Point point1, Point point2, Boolean active) {
+        displayNodes.get(point1).setConnectionHighlight(point2, active);
+    }
+    public void setConnectionHighlightColor(Point point1, Point point2, Color color) {
+        displayNodes.get(point1).setConnectionHighlightColor(point2, color);
+    }
+    public Boolean isConnectionHighlighted(Point point1, Point point2) {
+        return displayNodes.get(point1).isConnectionHighlighted(point2);
     }
 }

@@ -9,9 +9,11 @@ import java.util.Set;
 public interface GraphDisplay {
     void populateNodes(Set<Point> points);
     Collection<DisplayNode> getDisplayNodes();
-    void highlight(Point point);
-    void unhighlight(Point point);
-    void toggleHighlight(Point point);
-    void setHighlightColor(Point point, Color color);
     void addConnection(Point point1, Point point2, int weight);
+    void highlight(Point point, Boolean active);
+    void setHighlightColor(Point point, Color color);
+    Boolean isHighlighted(Point point);
+    void highlightConnection(Point point1, Point point2, Boolean active);
+    void setConnectionHighlightColor(Point point1, Point point2, Color color);
+    Boolean isConnectionHighlighted(Point point1, Point point2);
 }

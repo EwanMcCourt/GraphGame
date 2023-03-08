@@ -60,7 +60,7 @@ public class Controller {
 
         view.setHighlightColor(target, goal);
 
-        if (!path.isEmpty() && (path.getLast()==target || path.contains(point))) {
+        if (!path.isEmpty() && (path.getLast()==target || (path.contains(point) && !(path.getLast()==point)))) {
             return;
         }
 

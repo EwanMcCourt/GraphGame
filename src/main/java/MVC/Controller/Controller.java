@@ -35,6 +35,7 @@ public class Controller {
         }
         populateGraph();
         clickPoint(source);
+        view.highlightNode(target, true);
     }
 
     private void populateGraph() {

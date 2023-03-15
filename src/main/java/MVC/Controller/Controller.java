@@ -17,6 +17,8 @@ public class Controller {
     Point source;
     Point target;
 
+    int difficulty = 2;
+
     public Controller(View view, Model model) {
         //Initialise Model
         this.model = model;
@@ -35,9 +37,40 @@ public class Controller {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        view.addMenuButton("start", e -> start());
+        view.addMenuButton("stop", e -> stop());
+        view.addDifficultyEventListener((observableValue, number, t1) -> setDifficulty(t1));
+        view.setMaxDifficulty(12);
+
+        //for demo purposes only - to be removed
+        view.addMenuTextField((observableValue, oldValue, newValue) -> test(newValue));
+        view.addOptionsTextField((observableValue, oldValue, newValue) -> test(newValue));
+        view.addOptionsButton("test", e -> System.out.println("test button pressed"));
+
+
         populateGraph();
-//        view.displayChain(chain);
+//        view.displayPath(path);
         clickPoint(source);
+    }
+
+    private void test(String input) {
+        System.out.println(input);
+    }
+
+    private void start(){
+        System.out.println("Start");
+    }
+
+    private void stop(){
+        System.out.println("Stop");
+    }
+
+    private void setDifficulty(Number difficultyNumber) {
+        int difficulty = difficultyNumber.intValue();
+        if (this.difficulty != difficulty) {
+            this.difficulty = difficulty;
+            System.out.println(difficulty);
+        }
     }
 
     private void populateGraph() {

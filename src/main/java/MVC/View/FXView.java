@@ -5,28 +5,31 @@ import MVC.Model.Leaderboard;
 import MVC.Model.Player;
 import MVC.Model.Point;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FXView implements View{
     private final Stage stage;
-    private GraphDisplay graph;
+    private DisplayGraph graph;
+    private VBox options, leaderboard;
+    private HBox menu;
+    private Slider difficulty;
     private TextArea leaderboardTextArea;
     private ArrayList topPlayers;
 
@@ -34,34 +37,22 @@ public class FXView implements View{
         this.stage = stage;
     }
     public void initialise() {
-        VBox root = new VBox();
-        root.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(root, 700, 700, Color.INDIGO);
+        // initialise layouts
+        BorderPane root = new BorderPane();
+        options =  new VBox();
+        leaderboard =  new VBox();
+        menu = new HBox();
+//        Scene scene = new Scene(root, 700, 700, Color.INDIGO);
+        Scene scene = new Scene(root, Color.INDIGO);
 
+        // Create graph display
         SimpleDoubleProperty graphWidth = new SimpleDoubleProperty();
         SimpleDoubleProperty graphHeight = new SimpleDoubleProperty();
         graphWidth.bind(scene.widthProperty());
         graphHeight.bind(scene.heightProperty());
-
         graph = new DisplayGraph(graphWidth, graphHeight);
-//        graph.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-        TextField text = new TextField();
-        text.setMaxWidth(100);
-        Button button = new Button("Populate");
-        EventHandler<ActionEvent> eventHandler = e -> {
-            Set<Point> points = new HashSet<>();
-            for (int i=0; i<Integer.parseInt(text.getText()); i++) {
-                points.add(new Point(i));
-            }
-            graph.populateNodes(points);
-        };
-        button.setOnAction(eventHandler);
-
-        Button testButton = new Button("Test");
-        testButton.setOnAction(e -> test());
-
-
+        //---------Leaderboard---------
         TextField loginText = new TextField();
         loginText.setMaxWidth(100);
         Button loginButton = new Button("Login");
@@ -86,10 +77,35 @@ public class FXView implements View{
         leaderboardTextArea.setPrefSize(5,500);//change to dynamically size
         leaderboardTextArea.setMaxWidth(100);
         leaderboardTextArea.setMaxHeight(500);
+        //---------Leaderboard---------
 
+        //Difficulty Slider
+        difficulty = new Slider();
+        difficulty.setShowTickMarks(true);
+        difficulty.setBlockIncrement(1.0);
+        difficulty.setSnapToTicks(true);
+        difficulty.setMajorTickUnit(5);
+        difficulty.setMinorTickCount(4);
+        // https://stackoverflow.com/questions/38681664/how-to-make-javafx-slider-to-move-in-discrete-steps
+        difficulty.valueProperty().addListener((observableValue, number, t1) ->
+                difficulty.setValue(Math.round(t1.doubleValue())));
+        Text difficultyLabel = new Text("Difficulty");
+        Text currentDifficulty = new Text();
+        currentDifficulty.textProperty().bind(difficulty.valueProperty().asString());
 
+        //add to layouts
+        options.getChildren().addAll(difficultyLabel, difficulty, currentDifficulty);
+        leaderboard.getChildren().addAll(leaderboardTextArea,loginButton,loginText,registerButton, registerText);
+        menu.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        options.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        graph.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        leaderboard.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-        root.getChildren().addAll(testButton,button, text, loginButton,loginText,registerButton, registerText,(Node) graph,leaderboardTextArea);
+        //set positions
+        root.setTop(menu);
+        root.setCenter(graph);
+        root.setRight(leaderboard);
+        root.setLeft(options);
 
         stage.setScene(scene);
         stage.show();
@@ -103,20 +119,23 @@ public class FXView implements View{
         return graph.getDisplayNodes();
     }
 
+    // Set Application Icon
     public void setIcon(String filename) throws IOException {
         FileInputStream inputStream = new FileInputStream(filename);
         Image icon = new Image(inputStream);
         stage.getIcons().add(icon);
     }
 
+    // Set Application Icon
     public void setTitle(String title) {
         stage.setTitle(title);
     }
 
+    // Probably remove
     public void addNode() {
 
     }
-
+    // Probably remove
     public void removeNode() {
 
     }
@@ -144,7 +163,7 @@ public class FXView implements View{
         graph.addConnection(point1, point2, weight);
     }
 
-    public void displayChain(Path path) {
+    public void displayPath(Path path) {
         Color connectionColor = Color.RED;
         Color pointColor = Color.RED;
 
@@ -158,15 +177,41 @@ public class FXView implements View{
         highlightNode(path.getLast(), true);
     }
 
-    public void test() {
-        for (DisplayNode p1 : graph.getDisplayNodes()) {
-            for (DisplayNode p2 : graph.getDisplayNodes()) {
-                graph.addConnection(p1.getPoint(), p2.getPoint(), 0);
-            }
-        }
-
+    public void addMenuButton(String label, EventHandler<ActionEvent> eventHandler) {
+        Button button = new Button(label);
+        button.setOnAction(eventHandler);
+        menu.getChildren().add(button);
     }
 
+    public void addMenuTextField(ChangeListener<String> eventHandler) {
+        TextField textField = new TextField();
+        textField.textProperty().addListener(eventHandler);
+        menu.getChildren().add(textField);
+    }
+
+    public void addOptionsButton(String label, EventHandler<ActionEvent> eventHandler) {
+        Button button = new Button(label);
+        button.setOnAction(eventHandler);
+        options.getChildren().add(button);
+    }
+
+    public void addOptionsTextField(ChangeListener<String> eventHandler) {
+        TextField textField = new TextField();
+        textField.textProperty().addListener(eventHandler);
+        options.getChildren().add(textField);
+    }
+
+    public void setMaxDifficulty(int maxDifficulty) {
+        int newDifficulty = maxDifficulty-2;
+        if (difficulty.getValue()>newDifficulty){
+            difficulty.setValue(newDifficulty);
+        }
+        difficulty.setMax(newDifficulty);
+    }
+
+    public void addDifficultyEventListener(ChangeListener<Number> eventHandler) {
+        difficulty.valueProperty().addListener(eventHandler);
+    }
 
     public void login(String givenUsername) {
 

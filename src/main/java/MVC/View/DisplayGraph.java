@@ -32,8 +32,11 @@ public class DisplayGraph extends Pane implements GraphDisplay {
     private final static double CENTRE_POINT_RADIUS_SCALE_FACTOR = 0.2;
 
     public DisplayGraph(SimpleDoubleProperty width, SimpleDoubleProperty height) {
-        this.prefWidthProperty().bind(width);
-        this.prefHeightProperty().bind(height);
+        int minimumSize = 400;
+        this.prefWidthProperty().bind(Bindings.max(width,minimumSize));
+        this.prefHeightProperty().bind(Bindings.max(height,minimumSize));
+        this.minWidthProperty().set(minimumSize);
+        this.minHeightProperty().set(minimumSize);
 
         centreX = new SimpleDoubleProperty();
         centreY = new SimpleDoubleProperty();

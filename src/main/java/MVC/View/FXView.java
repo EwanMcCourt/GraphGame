@@ -1,23 +1,20 @@
 package MVC.View;
 
+import MVC.Model.Path;
 import MVC.Model.Leaderboard;
 import MVC.Model.Player;
-import javafx.application.Platform;
 import MVC.Model.Point;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,8 +23,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
 
 public class FXView implements View{
     private final Stage stage;
@@ -147,6 +142,20 @@ public class FXView implements View{
 
     public void addConnection(Point point1, Point point2, int weight) {
         graph.addConnection(point1, point2, weight);
+    }
+
+    public void displayChain(Path path) {
+        Color connectionColor = Color.RED;
+        Color pointColor = Color.RED;
+
+        for (int i = 0; i< path.size()-1; i++) {
+            setConnectionHighlightColor(path.get(i), path.get(i+1), connectionColor);
+            setHighlightColor(path.get(i), pointColor);
+            highlightConnection(path.get(i), path.get(i+1), true);
+            highlightNode(path.get(i), true);
+        }
+        setHighlightColor(path.getLast(), pointColor);
+        highlightNode(path.getLast(), true);
     }
 
     public void test() {

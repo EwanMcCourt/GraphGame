@@ -1,5 +1,6 @@
 package MVC.View;
 
+import MVC.Model.Path;
 import MVC.Model.Point;
 import javafx.scene.paint.Color;
 
@@ -22,4 +23,6 @@ public interface View {
     void highlightConnection(Point point1, Point point2, Boolean active);
     void setConnectionHighlightColor(Point point1, Point point2, Color color);
     Boolean isConnectionHighlighted(Point point1, Point point2);
+
+    void displayChain(Path path);
 }

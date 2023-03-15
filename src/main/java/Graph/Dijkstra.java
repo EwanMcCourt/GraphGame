@@ -49,12 +49,12 @@ public class Dijkstra<N extends Node<N>> {
             current = null;
         }
     }
-    public Path<N> getPath(N target) {
+    public GraphPath<N> getPath(N target) {
 //        System.out.format("Trying to find path from %d to %d\n",source,target);
         LinkedList<N> path = new LinkedList<>();
         if(source == target) {
             path.addFirst(target);
-            return new Path<>(path);
+            return new GraphPath<>(path);
         }
         if(previous.get(target) != null) {
             N tempTarget = target;
@@ -63,6 +63,6 @@ public class Dijkstra<N extends Node<N>> {
                 tempTarget = previous.get(tempTarget);
             }
         }
-        return new Path<>(path);
+        return new GraphPath<>(path);
     }
 }

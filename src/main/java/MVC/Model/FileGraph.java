@@ -79,7 +79,7 @@ public class FileGraph implements Model {
     }
 
     @Override
-    public Path<Point> getPath(Point source, Point target) {
-        return new Dijkstra<>(source, graph).getPath(target);
+    public Path getChain(Point source, Point target) {
+        return new Path(new Dijkstra<>(source, graph).getPath(target));
     }
 }

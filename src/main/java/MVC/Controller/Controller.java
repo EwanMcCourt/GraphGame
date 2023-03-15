@@ -1,5 +1,6 @@
 package MVC.Controller;
 
+import MVC.Model.Path;
 import MVC.Model.Model;
 import MVC.Model.Point;
 import MVC.View.*;
@@ -22,7 +23,8 @@ public class Controller {
 
         source = this.model.getPoint(3);
         target = this.model.getPoint(13);
-        model.getPath(source, target).print();
+        Path path = model.getChain(source, target);
+        path.print();
 
         //Initialise View
         this.view = view;
@@ -34,6 +36,7 @@ public class Controller {
             throw new RuntimeException(e);
         }
         populateGraph();
+//        view.displayChain(chain);
         clickPoint(source);
     }
 
@@ -60,8 +63,8 @@ public class Controller {
 
         view.setHighlightColor(target, goal);
 
-        if (!path.isEmpty() && (path.getLast()==target || path.contains(point))) {
-            return;
+        if (!path.isEmpty() && (path.getLast()==target || (path.contains(point) && !(path.getLast() ==point)))) {
+//            return;?
         }
 
         if (path.isEmpty()) {
@@ -77,6 +80,7 @@ public class Controller {
                 view.setConnectionHighlightColor(point, neighbour, option);
             }
         } else if (path.getLast()==point && point != source) {
+            System.out.println("testp");
             path.removeLast();
             if (!path.isEmpty()) {
                 view.highlightConnection(point, path.getLast(), false);

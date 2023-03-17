@@ -153,14 +153,18 @@ public class DisplayGraph extends Pane implements GraphDisplay {
 
         QuadCurve highlightCurve = createCurve(point1, point2);
         highlightCurve.setFill(Color.TRANSPARENT);
-        highlightCurve.setStroke(Color.SKYBLUE);
         highlightCurve.setStrokeWidth(5.0);
         highlightCurve.setVisible(false);
 
-        displayNodes.get(point1).addConnection(point2, displayNodes.get(point2), curve, highlightCurve);
-        displayNodes.get(point2).addConnection(point1, displayNodes.get(point1), curve, highlightCurve);
+        QuadCurve tempHighlightCurve = createCurve(point1, point2);
+        tempHighlightCurve.setFill(Color.TRANSPARENT);
+        tempHighlightCurve.setStrokeWidth(5.0);
+        tempHighlightCurve.setVisible(false);
 
-        this.getChildren().addAll(highlightCurve, curve);
+        displayNodes.get(point1).addConnection(point2, displayNodes.get(point2), curve, highlightCurve, tempHighlightCurve);
+        displayNodes.get(point2).addConnection(point1, displayNodes.get(point1), curve, highlightCurve, tempHighlightCurve);
+
+        this.getChildren().addAll(highlightCurve, curve, tempHighlightCurve);
     }
 
     private QuadCurve createCurve(Point point1, Point point2) {
@@ -202,7 +206,7 @@ public class DisplayGraph extends Pane implements GraphDisplay {
     public void highlight(Point point, Boolean active) {
         displayNodes.get(point).setHighlight(active);
     }
-    public void setHighlightColor(Point point, Color color) {
+    public void setHighlightColor(Point point, NodeColour color) {
         displayNodes.get(point).setHighlightColor(color);
     }
 
@@ -212,10 +216,40 @@ public class DisplayGraph extends Pane implements GraphDisplay {
     public void highlightConnection(Point point1, Point point2, Boolean active) {
         displayNodes.get(point1).setConnectionHighlight(point2, active);
     }
-    public void setConnectionHighlightColor(Point point1, Point point2, Color color) {
+    public void setConnectionHighlightColor(Point point1, Point point2, ConnectionColour color) {
         displayNodes.get(point1).setConnectionHighlightColor(point2, color);
     }
     public Boolean isConnectionHighlighted(Point point1, Point point2) {
         return displayNodes.get(point1).isConnectionHighlighted(point2);
+    }
+
+    public void tempHighlight(Point point, Boolean active) {
+        displayNodes.get(point).setTempHighlight(active);
+    }
+    public void setTempHighlightColor(Point point, NodeColour color) {
+        displayNodes.get(point).setTempHighlightColor(color);
+    }
+
+    public Boolean isTempHighlighted(Point point) {
+        return displayNodes.get(point).isTempHighlighted();
+    }
+    public void tempHighlightConnection(Point point1, Point point2, Boolean active) {
+        displayNodes.get(point1).setTempConnectionHighlight(point2, active);
+    }
+    public void setTempConnectionHighlightColor(Point point1, Point point2, ConnectionColour color) {
+        displayNodes.get(point1).setTempConnectionHighlightColor(point2, color);
+    }
+    public Boolean isTempConnectionHighlighted(Point point1, Point point2) {
+        return displayNodes.get(point1).isTempConnectionHighlighted(point2);
+    }
+
+    public void clearHighlights() {
+        for (DisplayNode node : displayNodes.values()) {
+            node.clearHighlights();
+        }
+    }
+
+    public void clearHighlights(Point point) {
+            displayNodes.get(point).clearHighlights();
     }
 }

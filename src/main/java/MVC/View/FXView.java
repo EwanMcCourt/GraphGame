@@ -26,13 +26,14 @@ import java.util.List;
 
 public class FXView implements View{
     private final Stage stage;
-    private DisplayGraph graph;
-    private VBox options, leaderboard;
+    private GraphDisplay graph;
+    private VBox options, leaderboard,
+    // V Experimenting, Will Probably Remove V
+    output;
     private HBox menu;
     private Slider difficulty;
     private TextArea leaderboardTextArea;
     private ArrayList topPlayers;
-
     public FXView(Stage stage) {
         this.stage = stage;
     }
@@ -41,6 +42,8 @@ public class FXView implements View{
         BorderPane root = new BorderPane();
         options =  new VBox();
         leaderboard =  new VBox();
+        output =  new VBox();
+        output.minHeightProperty().set(150);
         menu = new HBox();
 //        Scene scene = new Scene(root, 700, 700, Color.INDIGO);
         Scene scene = new Scene(root, Color.INDIGO);
@@ -81,6 +84,7 @@ public class FXView implements View{
 
         //Difficulty Slider
         difficulty = new Slider();
+        difficulty.setMin(3.0);
         difficulty.setShowTickMarks(true);
         difficulty.setBlockIncrement(1.0);
         difficulty.setSnapToTicks(true);
@@ -98,14 +102,16 @@ public class FXView implements View{
         leaderboard.getChildren().addAll(leaderboardTextArea,loginButton,loginText,registerButton, registerText);
         menu.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         options.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-        graph.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+//        graph.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         leaderboard.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        output.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
         //set positions
         root.setTop(menu);
-        root.setCenter(graph);
+        root.setCenter((Node) graph);
         root.setRight(leaderboard);
         root.setLeft(options);
+        root.setBottom(output);
 
         stage.setScene(scene);
         stage.show();
@@ -126,24 +132,14 @@ public class FXView implements View{
         stage.getIcons().add(icon);
     }
 
-    // Set Application Icon
+    // Set Application Title
     public void setTitle(String title) {
         stage.setTitle(title);
     }
-
-    // Probably remove
-    public void addNode() {
-
-    }
-    // Probably remove
-    public void removeNode() {
-
-    }
-
     public void highlightNode(Point point, Boolean active) {
         graph.highlight(point, active);
     }
-    public void setHighlightColor(Point point, Color color) {
+    public void setHighlightColor(Point point, NodeColour color) {
         graph.setHighlightColor(point, color);
     }
     public Boolean isHighlighted(Point point1) {
@@ -152,29 +148,88 @@ public class FXView implements View{
     public void highlightConnection(Point point1, Point point2, Boolean active) {
         graph.highlightConnection(point1, point2, active);
     }
-    public void setConnectionHighlightColor(Point point1, Point point2, Color color) {
+    public void setConnectionHighlightColor(Point point1, Point point2, ConnectionColour color) {
         graph.setConnectionHighlightColor(point1, point2, color);
     }
     public Boolean isConnectionHighlighted(Point point1, Point point2) {
         return graph.isConnectionHighlighted(point1, point2);
     }
 
+    public void tempHighlightNode(Point point, Boolean active) {
+        graph.tempHighlight(point, active);
+    }
+    public void setTempHighlightColor(Point point, NodeColour color) {
+        graph.setTempHighlightColor(point, color);
+    }
+    public Boolean isTempHighlighted(Point point1) {
+        return graph.isTempHighlighted(point1);
+    }
+    public void tempHighlightConnection(Point point1, Point point2, Boolean active) {
+        graph.tempHighlightConnection(point1, point2, active);
+    }
+    public void setTempConnectionHighlightColor(Point point1, Point point2, ConnectionColour color) {
+        graph.setTempConnectionHighlightColor(point1, point2, color);
+    }
+    public Boolean isTempConnectionHighlighted(Point point1, Point point2) {
+        return graph.isTempConnectionHighlighted(point1, point2);
+    }
+
     public void addConnection(Point point1, Point point2, int weight) {
         graph.addConnection(point1, point2, weight);
     }
 
-    public void displayPath(Path path) {
-        Color connectionColor = Color.RED;
-        Color pointColor = Color.RED;
+    public void clearHighlights() {
+        graph.clearHighlights();
+    }
 
-        for (int i = 0; i< path.size()-1; i++) {
-            setConnectionHighlightColor(path.get(i), path.get(i+1), connectionColor);
-            setHighlightColor(path.get(i), pointColor);
-            highlightConnection(path.get(i), path.get(i+1), true);
+    public void displayPath(Path path) {
+        if (path.isEmpty()) {
+            return;
+        }
+
+        for (int i = 0; i < path.size() - 1; i++) {
+            setConnectionHighlightColor(path.get(i), path.get(i + 1), ConnectionColour.SELECTED);
+            setHighlightColor(path.get(i), NodeColour.SELECTED);
+            highlightConnection(path.get(i), path.get(i + 1), true);
             highlightNode(path.get(i), true);
         }
-        setHighlightColor(path.getLast(), pointColor);
+        setHighlightColor(path.getLast(), NodeColour.SELECTED);
         highlightNode(path.getLast(), true);
+    }
+
+    public void showMoves(Path path) {
+        if(path.isEmpty()) {
+            return;
+        }
+
+        Point lastPoint = path.getLast();
+        for (Point point : lastPoint.getNeighbours()) {
+            if(!path.getPoints().contains(point)) {
+                setConnectionHighlightColor(lastPoint, point, ConnectionColour.AVAILABLE);
+                setHighlightColor(point, NodeColour.AVAILABLE);
+                highlightConnection(lastPoint, point, true);
+                highlightNode(point, true);
+            }
+        }
+    }
+
+    public void showMoves(Point point) {
+        setTempHighlightColor(point, NodeColour.CURRENT);
+        tempHighlightNode(point, true);
+        for (Point neighbour : point.getNeighbours()) {
+                setTempConnectionHighlightColor(point, neighbour, ConnectionColour.CURRENT);
+                setTempHighlightColor(neighbour, NodeColour.CURRENT);
+                tempHighlightConnection(point, neighbour, true);
+                tempHighlightNode(neighbour, true);
+        }
+    }
+
+    public void hideMoves(Point point) {
+        tempHighlightNode(point, false);
+        for (Point neighbour : point.getNeighbours()) {
+            tempHighlightConnection(point, neighbour, false);
+            tempHighlightNode(neighbour, false);
+        }
     }
 
     public void addMenuButton(String label, EventHandler<ActionEvent> eventHandler) {
@@ -202,15 +257,19 @@ public class FXView implements View{
     }
 
     public void setMaxDifficulty(int maxDifficulty) {
-        int newDifficulty = maxDifficulty-2;
-        if (difficulty.getValue()>newDifficulty){
-            difficulty.setValue(newDifficulty);
+        if (difficulty.getValue()>maxDifficulty){
+            difficulty.setValue(maxDifficulty);
         }
-        difficulty.setMax(newDifficulty);
+        difficulty.setMax(maxDifficulty);
     }
 
     public void addDifficultyEventListener(ChangeListener<Number> eventHandler) {
         difficulty.valueProperty().addListener(eventHandler);
+    }
+
+    // V Experimenting, Will Probably Remove V
+    public void showPathView(Path path) {
+        output.getChildren().add(new DisplayPath(path));
     }
 
     public void login(String givenUsername) {
@@ -253,7 +312,6 @@ public class FXView implements View{
             alert.setHeaderText("Registration Successful");
             alert.setContentText("You have now registered the account: " + givenUsername);
             alert.show();
-
         }
     }
 }

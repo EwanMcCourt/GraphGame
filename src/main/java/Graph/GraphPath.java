@@ -6,7 +6,7 @@ import java.util.List;
 public class GraphPath<N extends Node<N>> {
     N start;
     N end;
-    double weight=Double.POSITIVE_INFINITY;
+    private double weight=Double.POSITIVE_INFINITY;
     LinkedList<N> nodes;
 
     public GraphPath(LinkedList<N> nodes) {
@@ -29,6 +29,9 @@ public class GraphPath<N extends Node<N>> {
         }
 
         this.weight = weight;
+    }
+
+    public GraphPath() {
     }
 
     public List<N> getNodes() {

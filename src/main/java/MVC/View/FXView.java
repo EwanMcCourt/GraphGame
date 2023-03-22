@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -23,6 +24,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class FXView implements View{
     private final Stage stage;
@@ -119,6 +121,13 @@ public class FXView implements View{
 
     public void populateGraph(Set<Point> points) {
         graph.populateNodes(points);
+    }
+    public void populateEventHandlers(Consumer<? super DisplayNode> clicked, Consumer<? super DisplayNode> hover, Consumer<? super DisplayNode> unhover) {
+        for (DisplayNode node : getNodes()) {
+            node.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> clicked.accept(node));
+            node.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> hover.accept(node));
+            node.addEventFilter(MouseEvent.MOUSE_EXITED, e -> unhover.accept(node));
+        }
     }
 
     public Collection<DisplayNode> getNodes() {

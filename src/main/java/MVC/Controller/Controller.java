@@ -1,28 +1,25 @@
 package MVC.Controller;
 
-import MVC.Model.Path;
+import MVC.View.View;
 import MVC.Model.Model;
+
+import MVC.View.NodeColour;
+import MVC.Model.Path;
 import MVC.Model.Point;
-import MVC.View.*;
-import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
-import java.util.LinkedList;
 
 import static java.lang.Math.round;
 
 public class Controller {
     private final View view;
     private final Model model;
-    private final LinkedList<Point> path = new LinkedList<>();
     private Path selectedPath;
     private Path optimalPath;
     private Point source;
     private Point target;
-
     private Boolean gameOngoing = false;
-
-    int difficulty = 3;
+    private int difficulty = 3;
 
     public Controller(View view, Model model) {
         //Initialise Model
@@ -96,7 +93,7 @@ public class Controller {
     }
     private int getScore() {
         Double difference = Double.max(selectedPath.getWeight() - optimalPath.getWeight(), 0);
-        return (int) (round((1-(difference/optimalPath.getWeight())) * (Double.valueOf(difficulty-2)/ Double.valueOf(model.getMaxPathLength()-2))*1000));
+        return (int) (round((1-(difference/optimalPath.getWeight())) * ((double) (difficulty - 2) / (double) (model.getMaxPathLength() - 2))*1000));
     }
 
     private void setDifficulty(Number difficultyNumber) {
@@ -114,16 +111,17 @@ public class Controller {
             }
         }
 
-        // https://www.tutorialspoint.com/javafx/javafx_event_handling.htm
-        for (DisplayNode node : view.getNodes()) {
-            node.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> clickPoint(node.getPoint()));
-            node.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> hoverPoint(node.getPoint(),true));
-            node.addEventFilter(MouseEvent.MOUSE_EXITED, e -> hoverPoint(node.getPoint(),false));
-        }
+        // Using Lambdas mean that Controller is completely decoupled from JavaFX
+        view.populateEventHandlers(
+                clicked -> clickPoint(clicked.getPoint()),
+                hover -> hoverPoint(hover.getPoint(), true),
+                unhover -> hoverPoint(unhover.getPoint(), false)
+                );
     }
 
     public void hoverPoint(Point point, Boolean hover) {
-        if (!gameOngoing) {
+        // Check if game is active
+         if (!gameOngoing) {
             return;
         }
 

@@ -9,11 +9,13 @@ import javafx.event.EventHandler;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public interface View {
     void initialise();
     void setIcon(String filename) throws IOException;
     void populateGraph(Set<Point> points);
+    void populateEventHandlers(Consumer<? super DisplayNode> clicked, Consumer<? super DisplayNode> hover, Consumer<? super DisplayNode> unhover);
     Collection<DisplayNode> getNodes();
     void setTitle(String title);
     void addConnection(Point point1, Point point2, int weight);
@@ -42,4 +44,5 @@ public interface View {
     void hideMoves(Point point);
     // V Experimenting, Will Probably Remove V
     void showPathView(Path path);
+
 }

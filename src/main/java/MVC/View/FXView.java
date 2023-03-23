@@ -294,26 +294,18 @@ public class FXView implements View{
     public void login(String givenUsername) {
 
         Player player;
-        Alert alert;
 
         player = Leaderboard.loadPlayer(givenUsername);
         if (player == null){
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Input not valid");
-            alert.setContentText("This user does not exist. If you want to create a new user, please register.");
-            alert.showAndWait();
+            this.showErrorAlert("Input not valid", "This user does not exist. If you want to create a new user, please register.");
         }else{
-            alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Login Successful");
-            alert.setContentText("You are now logged in as " + givenUsername);
-            alert.show();
+            this.showInformationAlert("Login Successful", "You are now logged in as " + givenUsername);
 
         }
     }
 
     public void register(String givenUsername) {
         Player player;
-        Alert alert;
         List<Player> players;
         givenUsername =givenUsername.replaceAll("\\s+","");
         System.out.println(givenUsername);
@@ -321,16 +313,25 @@ public class FXView implements View{
         players = Leaderboard.loadPlayers();
 
         if (players.contains(player) || givenUsername.isEmpty()){
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Input not valid");
-            alert.setContentText("This user already exists. Please enter a unique username.");
-            alert.showAndWait();
+            this.showErrorAlert("Input not valid", "This user already exists. Please enter a unique username.");
         }else{
             Leaderboard.addPlayer(givenUsername);
-            alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Registration Successful");
-            alert.setContentText("You have now registered the account: " + givenUsername);
-            alert.show();
+            this.showInformationAlert("Registration Successful", "You have now registered the account: " + givenUsername);
         }
+    }
+
+    private void showAlert(String header, String content, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.show();
+    }
+
+    public void showInformationAlert(String header, String content) {
+        showAlert(header, content, Alert.AlertType.INFORMATION);
+    }
+
+    public void showErrorAlert(String header, String content) {
+        showAlert(header, content, Alert.AlertType.ERROR);
     }
 }

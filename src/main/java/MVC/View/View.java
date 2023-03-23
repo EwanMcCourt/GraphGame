@@ -44,6 +44,8 @@ public interface View {
     void hideMoves(Point point);
     void setStart(Point point);
     void setGoal(Point point);
+    void showInformationAlert(String header, String content);
+    void showErrorAlert(String header, String content);
     // V Experimenting, Will Probably Remove V
     void showPathView(Path path);
 

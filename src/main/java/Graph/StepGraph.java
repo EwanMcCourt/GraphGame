@@ -36,6 +36,22 @@ public class StepGraph<N extends Node<N>> {
     }
 
     public GraphPath<N> getPathBySize(int size) {
+        int upper = size, lower = size;
+        ArrayList<GraphPath<N>> candidates;
+
+        candidates = getPathSizeCandidates(size);
+        while (candidates.isEmpty()) {
+            System.out.format("Path with size %d or %d not found.", lower, upper);
+            upper++;
+            lower--;
+            candidates.addAll(getPathSizeCandidates(upper));
+            candidates.addAll(getPathSizeCandidates(lower));
+        }
+
+        return candidates.get(new Random().nextInt(candidates.size()));
+    }
+
+    private ArrayList<GraphPath<N>> getPathSizeCandidates(int size) {
         ArrayList<GraphPath<N>> candidates = new ArrayList<>();
         ArrayList<N> list = new ArrayList<>(graph.getNodes());
 
@@ -46,7 +62,8 @@ public class StepGraph<N extends Node<N>> {
                 }
             }
         }
-        return candidates.get(new Random().nextInt(candidates.size()));
+
+        return candidates;
     }
 
     public int getMaxLength() {

@@ -42,6 +42,8 @@ public interface View {
     void showMoves(Path path);
     void showMoves(Point point);
     void hideMoves(Point point);
+    void setStart(Point point);
+    void setGoal(Point point);
     // V Experimenting, Will Probably Remove V
     void showPathView(Path path);
 

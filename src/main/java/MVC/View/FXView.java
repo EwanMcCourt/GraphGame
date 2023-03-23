@@ -241,6 +241,16 @@ public class FXView implements View{
         }
     }
 
+    public void setStart(Point point) {
+        setHighlightColor(point, NodeColour.START);
+        highlightNode(point,true);
+    }
+
+    public void setGoal(Point point) {
+        setHighlightColor(point, NodeColour.GOAL);
+        highlightNode(point,true);
+    }
+
     public void addMenuButton(String label, EventHandler<ActionEvent> eventHandler) {
         Button button = new Button(label);
         button.setOnAction(eventHandler);

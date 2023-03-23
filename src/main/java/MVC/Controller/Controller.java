@@ -3,12 +3,11 @@ package MVC.Controller;
 import MVC.View.View;
 import MVC.Model.Model;
 
-import MVC.View.NodeColour;
+// Integral to game function
 import MVC.Model.Path;
 import MVC.Model.Point;
 
 import java.io.IOException;
-
 import static java.lang.Math.round;
 
 public class Controller {
@@ -75,10 +74,8 @@ public class Controller {
         view.showMoves(selectedPath);
 
         // Highlight Start And End Points
-        view.setHighlightColor(source, NodeColour.START);
-        view.highlightNode(source,true);
-        view.setHighlightColor(target, NodeColour.GOAL);
-        view.highlightNode(target,true);
+        view.setStart(source);
+        view.setGoal(target);
 
         optimalPath.print();
     }
@@ -178,9 +175,7 @@ public class Controller {
         }
 
         // Keep start and end highlighted
-        view.setHighlightColor(source, NodeColour.START);
-        view.highlightNode(source,true);
-        view.setHighlightColor(target, NodeColour.GOAL);
-        view.highlightNode(target,true);
+        view.setStart(source);
+        view.setGoal(target);
     }
 }

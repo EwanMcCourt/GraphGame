@@ -35,6 +35,8 @@ public class FXView implements View{
     private HBox menu;
     private Slider difficulty;
     private TextArea leaderboardTextArea;
+    private TextField loginTextField;
+    private TextField registerTextField;
     private ArrayList topPlayers;
     public FXView(Stage stage) {
         this.stage = stage;
@@ -58,15 +60,10 @@ public class FXView implements View{
         graph = new DisplayGraph(graphWidth, graphHeight);
 
         //---------Leaderboard---------
-        TextField loginText = new TextField();
-        loginText.setMaxWidth(100);
-        Button loginButton = new Button("Login");
-        loginButton.setOnAction(e -> login(loginText.getText()));
 
-        TextField registerText = new TextField();
-        registerText.setMaxWidth(100);
-        Button registerButton = new Button("Register");
-        registerButton.setOnAction(e -> register(registerText.getText()));
+
+
+
 
 
         leaderboardTextArea = new TextArea();
@@ -83,6 +80,10 @@ public class FXView implements View{
         leaderboardTextArea.setMaxWidth(100);
         leaderboardTextArea.setMaxHeight(500);
         //---------Leaderboard---------
+
+
+
+
 
         //Difficulty Slider
         difficulty = new Slider();
@@ -101,7 +102,7 @@ public class FXView implements View{
 
         //add to layouts
         options.getChildren().addAll(difficultyLabel, difficulty, currentDifficulty);
-        leaderboard.getChildren().addAll(leaderboardTextArea,loginButton,loginText,registerButton, registerText);
+        leaderboard.getChildren().addAll(leaderboardTextArea);
         menu.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         options.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 //        graph.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
@@ -251,6 +252,25 @@ public class FXView implements View{
         highlightNode(point,true);
     }
 
+    public void addLeaderboardButton(String label, EventHandler<ActionEvent> eventHandler) {
+        Button button = new Button(label);
+        button.setOnAction(eventHandler);
+        leaderboard.getChildren().add(button);
+    }
+    public void addLoginTextField(ChangeListener<String> eventHandler) {
+        TextField textField = new TextField();
+        textField.textProperty().addListener(eventHandler);
+        leaderboard.getChildren().add(textField);
+
+    }
+
+    public void addRegisterTextField(ChangeListener<String> eventHandler) {
+        TextField textField = new TextField();
+        textField.textProperty().addListener(eventHandler);
+        leaderboard.getChildren().add(textField);
+
+    }
+
     public void addMenuButton(String label, EventHandler<ActionEvent> eventHandler) {
         Button button = new Button(label);
         button.setOnAction(eventHandler);
@@ -291,34 +311,7 @@ public class FXView implements View{
         output.getChildren().add(new DisplayPath(path));
     }
 
-    public void login(String givenUsername) {
 
-        Player player;
-
-        player = Leaderboard.loadPlayer(givenUsername);
-        if (player == null){
-            this.showErrorAlert("Input not valid", "This user does not exist. If you want to create a new user, please register.");
-        }else{
-            this.showInformationAlert("Login Successful", "You are now logged in as " + givenUsername);
-
-        }
-    }
-
-    public void register(String givenUsername) {
-        Player player;
-        List<Player> players;
-        givenUsername =givenUsername.replaceAll("\\s+","");
-        System.out.println(givenUsername);
-        player = Leaderboard.loadPlayer(givenUsername);
-        players = Leaderboard.loadPlayers();
-
-        if (players.contains(player) || givenUsername.isEmpty()){
-            this.showErrorAlert("Input not valid", "This user already exists. Please enter a unique username.");
-        }else{
-            Leaderboard.addPlayer(givenUsername);
-            this.showInformationAlert("Registration Successful", "You have now registered the account: " + givenUsername);
-        }
-    }
 
     private void showAlert(String header, String content, Alert.AlertType type) {
         Alert alert = new Alert(type);

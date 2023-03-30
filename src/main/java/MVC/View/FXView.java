@@ -286,9 +286,12 @@ public class FXView implements View{
         difficulty.valueProperty().addListener(eventHandler);
     }
 
-    // V Experimenting, Will Probably Remove V
-    public void showPathView(Path path) {
-        output.getChildren().add(new DisplayPath(path));
+    public void showPathView(Path path, String label) {
+        output.getChildren().add(new DisplayPath(path, label));
+    }
+
+    public void clearPathView() {
+        output.getChildren().clear();
     }
 
     public void login(String givenUsername) {

@@ -46,7 +46,6 @@ public interface View {
     void setGoal(Point point);
     void showInformationAlert(String header, String content);
     void showErrorAlert(String header, String content);
-    // V Experimenting, Will Probably Remove V
-    void showPathView(Path path);
-
+    void showPathView(Path path, String label);
+    void clearPathView();
 }

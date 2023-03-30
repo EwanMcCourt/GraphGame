@@ -72,6 +72,8 @@ public class Controller {
         selectedPath.addLast(source);
         view.displayPath(selectedPath);
         view.showMoves(selectedPath);
+        view.clearPathView();
+        view.showPathView(selectedPath, "Selected Path:");
 
         // Highlight Start And End Points
         view.setStart(source);
@@ -83,14 +85,17 @@ public class Controller {
     private void stop(){
         gameOngoing = false;
         view.clearHighlights();
+        view.clearPathView();
     }
 
     private void finishGame() {
+        view.showPathView(selectedPath, "Your Path:");
+        view.showPathView(optimalPath, "Optimal Path:");
         System.out.format("Congratulations! Your path had a weight of %f, the most optimal path has a weight of %f.\nYou got a score of %d",selectedPath.getWeight(), optimalPath.getWeight(), getScore());
     }
     private int getScore() {
         Double difference = Double.max(selectedPath.getWeight() - optimalPath.getWeight(), 0);
-        return (int) (round((1-(difference/optimalPath.getWeight())) * ((double) (difficulty - 2) / (double) (model.getMaxPathLength() - 2))*1000));
+        return Integer.max((int) (round((1-(difference/optimalPath.getWeight())) * ((double) (difficulty - 2) / (double) (model.getMaxPathLength() - 2))*1000)),0);
     }
 
     private void setDifficulty(Number difficultyNumber) {
@@ -168,8 +173,10 @@ public class Controller {
         // Updating display
         view.clearHighlights();
         view.displayPath(selectedPath);
+        view.clearPathView();
         if(gameOngoing) {
             view.showMoves(selectedPath);
+            view.showPathView(selectedPath, "Selected Path:");
         } else {
             finishGame();
         }

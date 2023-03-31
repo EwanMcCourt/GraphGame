@@ -2,4 +2,3 @@ Ewan 17
 NotEwan 1
 Kyle 0
 john 0
-te 0

@@ -2,7 +2,7 @@ package Graph;
 
 import java.util.Set;
 
-public interface GraphADT<N extends Node<N>> {
+public interface GraphADT<N extends Node> {
     void addNode(N node);
     void addConnection(N source, N target, int weight, Boolean bidirectional);
     double getWeight(N source, N target);

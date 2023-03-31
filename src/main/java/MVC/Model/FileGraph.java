@@ -10,11 +10,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileGraph implements Model {
-    private final GraphADT<Point> graph;
-    private final StepGraph<Point> stepGraph;
+    GraphADT<Point> graph;
+
     public FileGraph(String filename) {
         graph = new ALGraph<>();
         BufferedReader input;
+        System.out.println("reading file");
         try {
             input = new BufferedReader(new FileReader(filename));
             final Pattern p = Pattern.compile("^([0-9]+) ([0-9]+) \\{'weight': ([0-9]+)}");
@@ -38,40 +39,47 @@ public class FileGraph implements Model {
                     }
 
                     graph.addConnection(source, target, Integer.parseInt(m.group(3)), true);
+//                    System.out.format("Adding connection from %d to %d with weight %d\n",Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)));
                 }
                 line = input.readLine();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        stepGraph = new StepGraph<>(graph);
     }
+
+    @Override
+    public void addPoint(Point point) {
+        graph.addNode(point);
+    }
+
+    @Override
+    public void addConnection(Point source, Point target, int weight, Boolean bidirectional) {
+        graph.addConnection(source, target, weight, bidirectional);
+    }
+
     @Override
     public double getWeight(Point source, Point target) {
         return source.getWeight(target);
     }
-    @Override
-    public Point getPoint(int index) {
-        return graph.getNode(index);
-    }
+
     @Override
     public Set<Point> getPoints() {
         return graph.getNodes();
     }
+
+    @Override
+    public Point getPoint(int index) {
+        return graph.getNode(index);
+    }
+
     @Override
     public Set<Point> getNeighbours(Point source) {
         return source.getNeighbours();
     }
+
     @Override
-    public Path getPath(Point source, Point target) {
-        return new Path(new Dijkstra<>(source, graph).getGraphPath(target));
-    }
-    @Override
-    public int getMaxPathLength() {
-        return stepGraph.getMaxLength();
-    }
-    @Override
-    public Path getRandomPathBySize(int size) {
-        return new Path(stepGraph.getPathBySize(size));
+    public Path<Point> getPath(Point source, Point target) {
+        return new Dijkstra<>(source, graph).getPath(target);
     }
 }

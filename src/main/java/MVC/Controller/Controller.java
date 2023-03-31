@@ -6,8 +6,12 @@ import MVC.Model.Model;
 // Integral to game function
 import MVC.Model.Path;
 import MVC.Model.Point;
+import MVC.Model.Player;
+import MVC.Model.Leaderboard;
 
 import java.io.IOException;
+import java.util.List;
+
 import static java.lang.Math.round;
 
 public class Controller {
@@ -19,6 +23,7 @@ public class Controller {
     private Point target;
     private Boolean gameOngoing = false;
     private int difficulty = 3;
+    private String loginInput, registerInput;
 
     public Controller(View view, Model model) {
         //Initialise Model
@@ -42,20 +47,19 @@ public class Controller {
         view.addMenuButton("Stop", e -> stop());
         view.addDifficultyEventListener((observableValue, number, t1) -> setDifficulty(t1));
         view.setMaxDifficulty(model.getMaxPathLength());
-
-        //for demo purposes only - to be removed
-        view.addMenuTextField((observableValue, oldValue, newValue) -> test(newValue));
-        view.addOptionsTextField((observableValue, oldValue, newValue) -> test(newValue));
-        view.addOptionsButton("test", e -> System.out.println("test button pressed"));
-
+        view.addLeaderboardButton("Login", e -> login(loginInput));
+        view.addLoginTextField((observableValue, oldValue, newValue) -> setLoginTextField(newValue));
+        view.addLeaderboardButton("Register", e -> register(registerInput));
+        view.addRegisterTextField((observableValue, oldValue, newValue) -> setRegisterTextField(newValue));
 
         populateGraph();
     }
-
-    private void test(String input) {
-        System.out.println(input);
+    private void setLoginTextField(String input) {
+        loginInput = input;
     }
-
+    private void setRegisterTextField(String input) {
+        registerInput = input;
+    }
     private void start(){
         gameOngoing = true;
 
@@ -79,32 +83,52 @@ public class Controller {
         view.setStart(source);
         view.setGoal(target);
     }
-
     private void stop(){
         gameOngoing = false;
         view.clearHighlights();
         view.clearPathView();
     }
-
     private void finishGame() {
         view.showPathView(selectedPath, "Your Path:");
         view.showPathView(optimalPath, "Optimal Path:");
         String message = String.format("Your path had a weight of %d, the most optimal path has a weight of %d.\nYou got a score of %d", selectedPath.getWeight().intValue(), optimalPath.getWeight().intValue(), getScore());
         view.showInformationAlert("Congratulations!", message);
     }
-
     private int getScore() {
         Double difference = Double.max(selectedPath.getWeight() - optimalPath.getWeight(), 0);
         return Integer.max((int) (round((1-(difference/optimalPath.getWeight())) * ((double) (difficulty - 2) / (double) (model.getMaxPathLength() - 2))*1000)),0);
     }
+    private void login(String givenUsername) {
+        Player player;
 
+        player = Leaderboard.loadPlayer(givenUsername);
+        if (player == null){
+            view.showErrorAlert("Input not valid", "This user does not exist. If you want to create a new user, please register.");
+        }else{
+            view.showInformationAlert("Login Successful", "You are now logged in as " + givenUsername);
+        }
+    }
+    private void register(String givenUsername) {
+        Player player;
+        List<Player> players;
+        givenUsername =givenUsername.replaceAll("\\s+","");
+
+        player = Leaderboard.loadPlayer(givenUsername);
+        players = Leaderboard.loadPlayers();
+
+        if (players.contains(player) || givenUsername.isEmpty()){
+            view.showErrorAlert("Input not valid", "This user already exists. Please enter a unique username.");
+        }else{
+            Leaderboard.addPlayer(givenUsername);
+            view.showInformationAlert("Registration Successful", "You have now registered the account: " + givenUsername);
+        }
+    }
     private void setDifficulty(Number difficultyNumber) {
         int difficulty = difficultyNumber.intValue();
         if (this.difficulty != difficulty) {
             this.difficulty = difficulty;
         }
     }
-
     private void populateGraph() {
         view.populateGraph(model.getPoints());
         for (Point point : model.getPoints()) {
@@ -120,7 +144,6 @@ public class Controller {
                 unhover -> hoverPoint(unhover.getPoint(), false)
                 );
     }
-
     public void hoverPoint(Point point, Boolean hover) {
         // Check if game is active
          if (!gameOngoing) {
@@ -133,7 +156,6 @@ public class Controller {
             view.hideMoves(point);
         }
     }
-
     public void clickPoint(Point point) {
         // Check if game is active
         if (!gameOngoing) {

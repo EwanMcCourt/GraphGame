@@ -1,72 +1,63 @@
 package MVC.View;
 
+import MVC.Model.Path;
 import MVC.Model.Leaderboard;
 import MVC.Model.Player;
-import javafx.application.Platform;
 import MVC.Model.Point;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.function.Consumer;
 
 public class FXView implements View{
     private final Stage stage;
     private GraphDisplay graph;
+    private VBox options, leaderboard, output;
+    private HBox menu;
+    private Slider difficulty;
     private TextArea leaderboardTextArea;
     private ArrayList topPlayers;
-
     public FXView(Stage stage) {
         this.stage = stage;
     }
+    @Override
     public void initialise() {
-        VBox root = new VBox();
-        root.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(root, 700, 700, Color.INDIGO);
+        // initialise layouts
+        BorderPane root = new BorderPane();
+        options =  new VBox();
+        leaderboard =  new VBox();
+        output =  new VBox();
+        menu = new HBox();
+        Scene scene = new Scene(root, Color.INDIGO);
 
+        // Adjust Sizing
+        output.minHeightProperty().set(100);
+
+        // Create graph display
         SimpleDoubleProperty graphWidth = new SimpleDoubleProperty();
         SimpleDoubleProperty graphHeight = new SimpleDoubleProperty();
         graphWidth.bind(scene.widthProperty());
         graphHeight.bind(scene.heightProperty());
-
         graph = new DisplayGraph(graphWidth, graphHeight);
-//        graph.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-        TextField text = new TextField();
-        text.setMaxWidth(100);
-        Button button = new Button("Populate");
-        EventHandler<ActionEvent> eventHandler = e -> {
-            Set<Point> points = new HashSet<>();
-            for (int i=0; i<Integer.parseInt(text.getText()); i++) {
-                points.add(new Point(i));
-            }
-            graph.populateNodes(points);
-        };
-        button.setOnAction(eventHandler);
-
-        Button testButton = new Button("Test");
-        testButton.setOnAction(e -> test());
-
-
+        //---------Leaderboard---------
         TextField loginText = new TextField();
         loginText.setMaxWidth(100);
         Button loginButton = new Button("Login");
@@ -91,97 +82,246 @@ public class FXView implements View{
         leaderboardTextArea.setPrefSize(5,500);//change to dynamically size
         leaderboardTextArea.setMaxWidth(100);
         leaderboardTextArea.setMaxHeight(500);
+        //---------Leaderboard---------
 
+        //Difficulty Slider
+        difficulty = new Slider();
+        difficulty.setMin(3.0);
+        difficulty.setShowTickMarks(true);
+        difficulty.setBlockIncrement(1.0);
+        difficulty.setSnapToTicks(true);
+        difficulty.setMajorTickUnit(5);
+        difficulty.setMinorTickCount(4);
+        // https://stackoverflow.com/questions/38681664/how-to-make-javafx-slider-to-move-in-discrete-steps
+        difficulty.valueProperty().addListener((observableValue, number, t1) ->
+                difficulty.setValue(Math.round(t1.doubleValue())));
+        Text difficultyLabel = new Text("Difficulty");
+        Text currentDifficulty = new Text();
+        currentDifficulty.textProperty().bind(difficulty.valueProperty().asString());
 
+        //add to layouts
+        options.getChildren().addAll(difficultyLabel, difficulty, currentDifficulty);
+        leaderboard.getChildren().addAll(leaderboardTextArea,loginButton,loginText,registerButton, registerText);
 
-        root.getChildren().addAll(testButton,button, text, loginButton,loginText,registerButton, registerText,(Node) graph,leaderboardTextArea);
+        // Borders (Mostly For Debugging)
+        menu.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        options.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+//        graph.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        leaderboard.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        output.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
+        //set positions
+        root.setTop(menu);
+        root.setCenter((Node) graph);
+        root.setRight(leaderboard);
+        root.setLeft(options);
+        root.setBottom(output);
+
+        // Display The Stage
         stage.setScene(scene);
         stage.show();
     }
-
-    public void populateGraph(Set<Point> points) {
-        graph.populateNodes(points);
-    }
-
-    public Collection<DisplayNode> getNodes() {
-        return graph.getDisplayNodes();
-    }
-
+    @Override // Set Application Icon
     public void setIcon(String filename) throws IOException {
         FileInputStream inputStream = new FileInputStream(filename);
         Image icon = new Image(inputStream);
         stage.getIcons().add(icon);
     }
-
+    @Override // Set Application Title
     public void setTitle(String title) {
         stage.setTitle(title);
     }
-
-    public void addNode() {
-
+    @Override
+    public void populateGraph(Set<Point> points) {
+        graph.populateNodes(points);
+    }
+    @Override
+    public void populateEventHandlers(Consumer<? super DisplayNode> clicked, Consumer<? super DisplayNode> hover, Consumer<? super DisplayNode> unhover) {
+        for (DisplayNode node : getNodes()) {
+            node.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> clicked.accept(node));
+            node.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> hover.accept(node));
+            node.addEventFilter(MouseEvent.MOUSE_EXITED, e -> unhover.accept(node));
+        }
     }
 
-    public void removeNode() {
-
+    @Override
+    public Collection<DisplayNode> getNodes() {
+        return graph.getDisplayNodes();
     }
-
-    public void highlightNode(Point point, Boolean active) {
-        graph.highlight(point, active);
-    }
-    public void setHighlightColor(Point point, Color color) {
-        graph.setHighlightColor(point, color);
-    }
-    public Boolean isHighlighted(Point point1) {
-        return graph.isHighlighted(point1);
-    }
-    public void highlightConnection(Point point1, Point point2, Boolean active) {
-        graph.highlightConnection(point1, point2, active);
-    }
-    public void setConnectionHighlightColor(Point point1, Point point2, Color color) {
-        graph.setConnectionHighlightColor(point1, point2, color);
-    }
-    public Boolean isConnectionHighlighted(Point point1, Point point2) {
-        return graph.isConnectionHighlighted(point1, point2);
-    }
-
+    @Override
     public void addConnection(Point point1, Point point2, int weight) {
         graph.addConnection(point1, point2, weight);
     }
-
-    public void test() {
-        for (DisplayNode p1 : graph.getDisplayNodes()) {
-            for (DisplayNode p2 : graph.getDisplayNodes()) {
-                graph.addConnection(p1.getPoint(), p2.getPoint(), 0);
-            }
+    @Override
+    public void highlightNode(Point point, Boolean active) {
+        graph.highlight(point, active);
+    }
+    @Override
+    public void setHighlightColor(Point point, NodeColour color) {
+        graph.setHighlightColor(point, color);
+    }
+    @Override
+    public Boolean isHighlighted(Point point1) {
+        return graph.isHighlighted(point1);
+    }
+    @Override
+    public void highlightConnection(Point point1, Point point2, Boolean active) {
+        graph.highlightConnection(point1, point2, active);
+    }
+    @Override
+    public void setConnectionHighlightColor(Point point1, Point point2, ConnectionColour color) {
+        graph.setConnectionHighlightColor(point1, point2, color);
+    }
+    @Override
+    public Boolean isConnectionHighlighted(Point point1, Point point2) {
+        return graph.isConnectionHighlighted(point1, point2);
+    }
+    @Override
+    public void tempHighlightNode(Point point, Boolean active) {
+        graph.tempHighlight(point, active);
+    }
+    @Override
+    public void setTempHighlightColor(Point point, NodeColour color) {
+        graph.setTempHighlightColor(point, color);
+    }
+    @Override
+    public Boolean isTempHighlighted(Point point1) {
+        return graph.isTempHighlighted(point1);
+    }
+    @Override
+    public void tempHighlightConnection(Point point1, Point point2, Boolean active) {
+        graph.tempHighlightConnection(point1, point2, active);
+    }
+    @Override
+    public void setTempConnectionHighlightColor(Point point1, Point point2, ConnectionColour color) {
+        graph.setTempConnectionHighlightColor(point1, point2, color);
+    }
+    @Override
+    public Boolean isTempConnectionHighlighted(Point point1, Point point2) {
+        return graph.isTempConnectionHighlighted(point1, point2);
+    }
+    @Override
+    public void clearHighlights() {
+        graph.clearHighlights();
+    }
+    @Override
+    public void displayPath(Path path) {
+        if (path.isEmpty()) {
+            return;
         }
 
+        for (int i = 0; i < path.size() - 1; i++) {
+            setConnectionHighlightColor(path.get(i), path.get(i + 1), ConnectionColour.SELECTED);
+            setHighlightColor(path.get(i), NodeColour.SELECTED);
+            highlightConnection(path.get(i), path.get(i + 1), true);
+            highlightNode(path.get(i), true);
+        }
+        setHighlightColor(path.getLast(), NodeColour.SELECTED);
+        highlightNode(path.getLast(), true);
     }
+    @Override
+    public void showMoves(Path path) {
+        if(path.isEmpty()) {
+            return;
+        }
 
-
+        Point lastPoint = path.getLast();
+        for (Point point : lastPoint.getNeighbours()) {
+            if(!path.getPoints().contains(point)) {
+                setConnectionHighlightColor(lastPoint, point, ConnectionColour.AVAILABLE);
+                setHighlightColor(point, NodeColour.AVAILABLE);
+                highlightConnection(lastPoint, point, true);
+                highlightNode(point, true);
+            }
+        }
+    }
+    @Override
+    public void showMoves(Point point) {
+        setTempHighlightColor(point, NodeColour.CURRENT);
+        tempHighlightNode(point, true);
+        for (Point neighbour : point.getNeighbours()) {
+                setTempConnectionHighlightColor(point, neighbour, ConnectionColour.CURRENT);
+                setTempHighlightColor(neighbour, NodeColour.CURRENT);
+                tempHighlightConnection(point, neighbour, true);
+                tempHighlightNode(neighbour, true);
+        }
+    }
+    @Override
+    public void hideMoves(Point point) {
+        tempHighlightNode(point, false);
+        for (Point neighbour : point.getNeighbours()) {
+            tempHighlightConnection(point, neighbour, false);
+            tempHighlightNode(neighbour, false);
+        }
+    }
+    @Override
+    public void setStart(Point point) {
+        setHighlightColor(point, NodeColour.START);
+        highlightNode(point,true);
+    }
+    @Override
+    public void setGoal(Point point) {
+        setHighlightColor(point, NodeColour.GOAL);
+        highlightNode(point,true);
+    }
+    @Override
+    public void showPathView(Path path, String label) {
+        output.getChildren().add(new DisplayPath(path, label));
+    }
+    @Override
+    public void clearPathView() {
+        output.getChildren().clear();
+    }
+    @Override
+    public void addMenuButton(String label, EventHandler<ActionEvent> eventHandler) {
+        Button button = new Button(label);
+        button.setOnAction(eventHandler);
+        menu.getChildren().add(button);
+    }
+    @Override
+    public void addMenuTextField(ChangeListener<String> eventHandler) {
+        TextField textField = new TextField();
+        textField.textProperty().addListener(eventHandler);
+        menu.getChildren().add(textField);
+    }
+    @Override
+    public void addOptionsButton(String label, EventHandler<ActionEvent> eventHandler) {
+        Button button = new Button(label);
+        button.setOnAction(eventHandler);
+        options.getChildren().add(button);
+    }
+    @Override
+    public void addOptionsTextField(ChangeListener<String> eventHandler) {
+        TextField textField = new TextField();
+        textField.textProperty().addListener(eventHandler);
+        options.getChildren().add(textField);
+    }
+    @Override
+    public void setMaxDifficulty(int maxDifficulty) {
+        if (difficulty.getValue() > maxDifficulty) {
+            difficulty.setValue(maxDifficulty);
+        }
+        difficulty.setMax(maxDifficulty);
+    }
+    @Override
+    public void addDifficultyEventListener(ChangeListener<Number> eventHandler) {
+        difficulty.valueProperty().addListener(eventHandler);
+    }
     public void login(String givenUsername) {
 
         Player player;
-        Alert alert;
 
         player = Leaderboard.loadPlayer(givenUsername);
         if (player == null){
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Input not valid");
-            alert.setContentText("This user does not exist. If you want to create a new user, please register.");
-            alert.showAndWait();
+            this.showErrorAlert("Input not valid", "This user does not exist. If you want to create a new user, please register.");
         }else{
-            alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Login Successful");
-            alert.setContentText("You are now logged in as " + givenUsername);
-            alert.show();
+            this.showInformationAlert("Login Successful", "You are now logged in as " + givenUsername);
 
         }
     }
 
     public void register(String givenUsername) {
         Player player;
-        Alert alert;
         List<Player> players;
         givenUsername =givenUsername.replaceAll("\\s+","");
         System.out.println(givenUsername);
@@ -189,17 +329,25 @@ public class FXView implements View{
         players = Leaderboard.loadPlayers();
 
         if (players.contains(player) || givenUsername.isEmpty()){
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Input not valid");
-            alert.setContentText("This user already exists. Please enter a unique username.");
-            alert.showAndWait();
+            this.showErrorAlert("Input not valid", "This user already exists. Please enter a unique username.");
         }else{
             Leaderboard.addPlayer(givenUsername);
-            alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Registration Successful");
-            alert.setContentText("You have now registered the account: " + givenUsername);
-            alert.show();
-
+            this.showInformationAlert("Registration Successful", "You have now registered the account: " + givenUsername);
         }
+    }
+
+    private void showAlert(String header, String content, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.show();
+    }
+    @Override
+    public void showInformationAlert(String header, String content) {
+        showAlert(header, content, Alert.AlertType.INFORMATION);
+    }
+    @Override
+    public void showErrorAlert(String header, String content) {
+        showAlert(header, content, Alert.AlertType.ERROR);
     }
 }

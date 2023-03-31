@@ -7,13 +7,15 @@ import java.util.Set;
 
 public class Point implements Node<Point> {
     private final int index;
-    HashMap<Point,Integer> connections = new HashMap<>();
+    private final HashMap<Point,Integer> connections = new HashMap<>();
     public Point(int index) {
         this.index = index;
     }
+    @Override
     public void addConnection(Point target, int weight) {
         connections.put(target, weight);
     }
+    @Override
     public double getWeight(Point target) {
         if(target == this) {
             return 0;
@@ -24,9 +26,11 @@ public class Point implements Node<Point> {
             return Double.POSITIVE_INFINITY;
         }
     }
+    @Override
     public int getIndex() {
         return index;
     }
+    @Override
     public Set<Point> getNeighbours() {
         return connections.keySet();
     }

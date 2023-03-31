@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class FileGraph implements Model {
     GraphADT<Point> graph;
-    StepGraph<Point> stepGraph;
+
     public FileGraph(String filename) {
         graph = new ALGraph<>();
         BufferedReader input;
@@ -46,8 +46,6 @@ public class FileGraph implements Model {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        stepGraph = new StepGraph<>(graph);
-        stepGraph.getPathBySize(3);
     }
 
     @Override
@@ -81,15 +79,7 @@ public class FileGraph implements Model {
     }
 
     @Override
-    public Path getPath(Point source, Point target) {
-        return new Path(new Dijkstra<>(source, graph).getGraphPath(target));
-    }
-
-    public int getMaxPathLength() {
-        return stepGraph.getMaxLength();
-    }
-
-    public Path getRandomPathBySize(int size) {
-        return new Path(stepGraph.getPathBySize(size));
+    public Path<Point> getPath(Point source, Point target) {
+        return new Dijkstra<>(source, graph).getPath(target);
     }
 }

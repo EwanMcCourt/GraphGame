@@ -1,63 +1,73 @@
 package MVC.View;
 
-import MVC.Model.Path;
 import MVC.Model.Leaderboard;
 import MVC.Model.Player;
+import javafx.application.Platform;
 import MVC.Model.Point;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Optional;
+import java.util.Scanner;
 
 public class FXView implements View{
     private final Stage stage;
     private GraphDisplay graph;
-    private VBox options, leaderboard,
-    // V Experimenting, Will Probably Remove V
-    output;
-    private HBox menu;
-    private Slider difficulty;
     private TextArea leaderboardTextArea;
     private TextField loginTextField;
     private TextField registerTextField;
     private ArrayList topPlayers;
+
     public FXView(Stage stage) {
         this.stage = stage;
     }
     public void initialise() {
-        // initialise layouts
-        BorderPane root = new BorderPane();
-        options =  new VBox();
-        leaderboard =  new VBox();
-        output =  new VBox();
-        output.minHeightProperty().set(150);
-        menu = new HBox();
-//        Scene scene = new Scene(root, 700, 700, Color.INDIGO);
-        Scene scene = new Scene(root, Color.INDIGO);
+        VBox root = new VBox();
+        root.setAlignment(Pos.CENTER);
+        Scene scene = new Scene(root, 700, 700, Color.INDIGO);
 
-        // Create graph display
         SimpleDoubleProperty graphWidth = new SimpleDoubleProperty();
         SimpleDoubleProperty graphHeight = new SimpleDoubleProperty();
         graphWidth.bind(scene.widthProperty());
         graphHeight.bind(scene.heightProperty());
+
         graph = new DisplayGraph(graphWidth, graphHeight);
+//        graph.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+
+        TextField text = new TextField();
+        text.setMaxWidth(100);
+        Button button = new Button("Populate");
+        EventHandler<ActionEvent> eventHandler = e -> {
+            Set<Point> points = new HashSet<>();
+            for (int i=0; i<Integer.parseInt(text.getText()); i++) {
+                points.add(new Point(i));
+            }
+            graph.populateNodes(points);
+        };
+        button.setOnAction(eventHandler);
+
+        Button testButton = new Button("Test");
+        testButton.setOnAction(e -> test());
+
 
         //---------Leaderboard---------
 
@@ -109,12 +119,9 @@ public class FXView implements View{
         leaderboard.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         output.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-        //set positions
-        root.setTop(menu);
-        root.setCenter((Node) graph);
-        root.setRight(leaderboard);
-        root.setLeft(options);
-        root.setBottom(output);
+
+
+        root.getChildren().addAll(testButton,button, text, loginButton,loginText,registerButton, registerText,(Node) graph,leaderboardTextArea);
 
         stage.setScene(scene);
         stage.show();
@@ -123,33 +130,33 @@ public class FXView implements View{
     public void populateGraph(Set<Point> points) {
         graph.populateNodes(points);
     }
-    public void populateEventHandlers(Consumer<? super DisplayNode> clicked, Consumer<? super DisplayNode> hover, Consumer<? super DisplayNode> unhover) {
-        for (DisplayNode node : getNodes()) {
-            node.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> clicked.accept(node));
-            node.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> hover.accept(node));
-            node.addEventFilter(MouseEvent.MOUSE_EXITED, e -> unhover.accept(node));
-        }
-    }
 
     public Collection<DisplayNode> getNodes() {
         return graph.getDisplayNodes();
     }
 
-    // Set Application Icon
     public void setIcon(String filename) throws IOException {
         FileInputStream inputStream = new FileInputStream(filename);
         Image icon = new Image(inputStream);
         stage.getIcons().add(icon);
     }
 
-    // Set Application Title
     public void setTitle(String title) {
         stage.setTitle(title);
     }
+
+    public void addNode() {
+
+    }
+
+    public void removeNode() {
+
+    }
+
     public void highlightNode(Point point, Boolean active) {
         graph.highlight(point, active);
     }
-    public void setHighlightColor(Point point, NodeColour color) {
+    public void setHighlightColor(Point point, Color color) {
         graph.setHighlightColor(point, color);
     }
     public Boolean isHighlighted(Point point1) {
@@ -158,67 +165,21 @@ public class FXView implements View{
     public void highlightConnection(Point point1, Point point2, Boolean active) {
         graph.highlightConnection(point1, point2, active);
     }
-    public void setConnectionHighlightColor(Point point1, Point point2, ConnectionColour color) {
+    public void setConnectionHighlightColor(Point point1, Point point2, Color color) {
         graph.setConnectionHighlightColor(point1, point2, color);
     }
     public Boolean isConnectionHighlighted(Point point1, Point point2) {
         return graph.isConnectionHighlighted(point1, point2);
     }
 
-    public void tempHighlightNode(Point point, Boolean active) {
-        graph.tempHighlight(point, active);
-    }
-    public void setTempHighlightColor(Point point, NodeColour color) {
-        graph.setTempHighlightColor(point, color);
-    }
-    public Boolean isTempHighlighted(Point point1) {
-        return graph.isTempHighlighted(point1);
-    }
-    public void tempHighlightConnection(Point point1, Point point2, Boolean active) {
-        graph.tempHighlightConnection(point1, point2, active);
-    }
-    public void setTempConnectionHighlightColor(Point point1, Point point2, ConnectionColour color) {
-        graph.setTempConnectionHighlightColor(point1, point2, color);
-    }
-    public Boolean isTempConnectionHighlighted(Point point1, Point point2) {
-        return graph.isTempConnectionHighlighted(point1, point2);
-    }
-
     public void addConnection(Point point1, Point point2, int weight) {
         graph.addConnection(point1, point2, weight);
     }
 
-    public void clearHighlights() {
-        graph.clearHighlights();
-    }
-
-    public void displayPath(Path path) {
-        if (path.isEmpty()) {
-            return;
-        }
-
-        for (int i = 0; i < path.size() - 1; i++) {
-            setConnectionHighlightColor(path.get(i), path.get(i + 1), ConnectionColour.SELECTED);
-            setHighlightColor(path.get(i), NodeColour.SELECTED);
-            highlightConnection(path.get(i), path.get(i + 1), true);
-            highlightNode(path.get(i), true);
-        }
-        setHighlightColor(path.getLast(), NodeColour.SELECTED);
-        highlightNode(path.getLast(), true);
-    }
-
-    public void showMoves(Path path) {
-        if(path.isEmpty()) {
-            return;
-        }
-
-        Point lastPoint = path.getLast();
-        for (Point point : lastPoint.getNeighbours()) {
-            if(!path.getPoints().contains(point)) {
-                setConnectionHighlightColor(lastPoint, point, ConnectionColour.AVAILABLE);
-                setHighlightColor(point, NodeColour.AVAILABLE);
-                highlightConnection(lastPoint, point, true);
-                highlightNode(point, true);
+    public void test() {
+        for (DisplayNode p1 : graph.getDisplayNodes()) {
+            for (DisplayNode p2 : graph.getDisplayNodes()) {
+                graph.addConnection(p1.getPoint(), p2.getPoint(), 0);
             }
         }
     }
@@ -302,14 +263,8 @@ public class FXView implements View{
         difficulty.setMax(maxDifficulty);
     }
 
-    public void addDifficultyEventListener(ChangeListener<Number> eventHandler) {
-        difficulty.valueProperty().addListener(eventHandler);
     }
 
-    // V Experimenting, Will Probably Remove V
-    public void showPathView(Path path) {
-        output.getChildren().add(new DisplayPath(path));
-    }
 
 
 
@@ -324,7 +279,6 @@ public class FXView implements View{
         showAlert(header, content, Alert.AlertType.INFORMATION);
     }
 
-    public void showErrorAlert(String header, String content) {
-        showAlert(header, content, Alert.AlertType.ERROR);
+        }
     }
 }

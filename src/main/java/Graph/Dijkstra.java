@@ -12,10 +12,6 @@ public class Dijkstra<N extends Node<N>> {
     Map<N, N> previous = new HashMap<>();
 
     public Dijkstra(N source, GraphADT<N> graph) {
-        this(source, graph, false);
-    }
-
-    public Dijkstra(N source, GraphADT<N> graph, Boolean uniformCost) {
         this.source = source;
         this.graph = graph;
         N current = null;
@@ -42,12 +38,7 @@ public class Dijkstra<N extends Node<N>> {
 //            }
             for (N neighbour : graph.getNeighbours(current)) {
                 if (unvisited.contains(neighbour)) {
-                    double dist;
-                    if (uniformCost) {
-                        dist = distance.get(current) + 1;
-                    } else {
-                        dist = distance.get(current) + graph.getWeight(current, neighbour);
-                    }
+                    double dist = distance.get(current) + graph.getWeight(current, neighbour);
 //                    System.out.format("Distance from %d to %d is %f\n", current.getIndex(), neighbour.getIndex(), dist);
                     if (dist < distance.get(neighbour)) {
                         distance.put(neighbour, dist);
@@ -58,12 +49,12 @@ public class Dijkstra<N extends Node<N>> {
             current = null;
         }
     }
-    public GraphPath<N> getGraphPath(N target) {
+    public Path<N> getPath(N target) {
 //        System.out.format("Trying to find path from %d to %d\n",source,target);
         LinkedList<N> path = new LinkedList<>();
         if(source == target) {
             path.addFirst(target);
-            return new GraphPath<>(path);
+            return new Path<>(path);
         }
         if(previous.get(target) != null) {
             N tempTarget = target;
@@ -72,6 +63,6 @@ public class Dijkstra<N extends Node<N>> {
                 tempTarget = previous.get(tempTarget);
             }
         }
-        return new GraphPath<>(path);
+        return new Path<>(path);
     }
 }

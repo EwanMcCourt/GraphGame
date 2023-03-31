@@ -1,4 +1,5 @@
 package MVC.Model;
+import Graph.*;
 
 import java.util.Set;
 
@@ -10,6 +11,4 @@ public interface Model {
     Path getPath(Point source, Point target);
     Set<Point> getPoints();
     Set<Point> getNeighbours(Point source);
-    int getMaxPathLength();
-    Path getRandomPathBySize(int size);
 }

@@ -30,7 +30,6 @@ public class GraphPath<N extends Node<N>> {
     public GraphPath(GraphPath<N> graphPath) {
         this.nodes = graphPath.getNodes();
         this.weights = graphPath.getWeights();
-
     }
     public N getFirst() {
         return nodes.get(0);
@@ -56,13 +55,11 @@ public class GraphPath<N extends Node<N>> {
         }
         nodes.add(node);
     }
-    public N removeLast() {
-        N node = getLast();
+    public void removeLast() {
         nodes.remove(nodes.size()-1);
         if(!nodes.isEmpty()) {
             weights.remove(weights.size()-1);
         }
-        return node;
     }
     public Double getWeight() {
         return weights.stream().mapToDouble(Double::valueOf).sum();

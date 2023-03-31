@@ -1,19 +1,18 @@
 package MVC.Model;
-import MVC.View.FXView;
 
 import java.io.*;
 import java.util.*;
 
 public class Leaderboard{
-    static List<Player> leaderboard = new ArrayList<>();
+    private static final List<Player> leaderboard = new ArrayList<>();
 
-    static File file = new File("src/main/resources/MVC/Model/leaderboard.txt");
+    private static final File file = new File("src/main/resources/MVC/Model/leaderboard.txt");
 
 
     public static void addPlayer(String givenUsername) {
         Leaderboard.loadPlayers();
 
-        FileWriter writing = null;
+        FileWriter writing;
         try {
 
             writing = new FileWriter(file, true);
@@ -25,9 +24,9 @@ public class Leaderboard{
 
                 //Checks if players file is empty before writing to a new line
                 if (line == null) {
-                    writing.append( givenUsername + " " + 0 );
+                    writing.append(givenUsername).append(" ").append(String.valueOf(0));
                 } else {
-                    writing.append("\n" + givenUsername + " " +0 );
+                    writing.append("\n").append(givenUsername).append(" ").append(String.valueOf(0));
                 }
 
 
@@ -46,8 +45,8 @@ public class Leaderboard{
 
             writing = new FileWriter(file);
 
-            for (int i = 0; i < leaderboard.size(); i++) {
-                writing.append(leaderboard.get(i).getUsername() + " "  + leaderboard.get(i).getGamesPlayed() + "\n");
+            for (Player player : leaderboard) {
+                writing.append(player.getUsername()).append(" ").append(String.valueOf(player.getGamesPlayed())).append("\n");
             }
             writing.close();
         }
@@ -79,7 +78,7 @@ public class Leaderboard{
     }
 
 
-    public static ArrayList getTopTenPlayers() {
+    public static ArrayList<String> getTopTenPlayers() {
 
         List<Player> allPlayers = new ArrayList<>();
         ArrayList<String> topPlayers = new ArrayList<>();
@@ -102,9 +101,9 @@ public class Leaderboard{
         allPlayers.sort(Comparator.comparing(Player::getGamesPlayed, Comparator.reverseOrder()));
         if (allPlayers.size()<10){
 
-            for (int i = 0; i < allPlayers.size(); i++) {
+            for (Player allPlayer : allPlayers) {
 
-                topPlayers.add(allPlayers.get(i).toString());
+                topPlayers.add(allPlayer.toString());
 
             }
         }else{
@@ -121,23 +120,21 @@ public class Leaderboard{
     public static Player loadPlayer(String givenUsername){
         loadPlayers();
         Player playerInfo = null;
-        Scanner reader= null;
 
         try {
-            reader = new Scanner(file);
-            for(int i =0;i<leaderboard.size();i++){
+            Scanner reader = new Scanner(file);
+            for (Player player : leaderboard) {
 
-                if(leaderboard.get(i).getUsername().equals(givenUsername)){
+                if (player.getUsername().equals(givenUsername)) {
 
-                    playerInfo =leaderboard.get(i);
+                    playerInfo = player;
 
                 }
             }
+            reader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
-        reader.close();
 
         return playerInfo;
     }

@@ -16,6 +16,6 @@ public class Main extends Application {
         View view = new FXView(stage);
 //        Model model = new FileGraph("src/main/resources/MVC/Model/pointssmall.txt");
         Model model = new FileGraph("src/main/resources/MVC/Model/points.txt");
-        Controller controller = new Controller(view, model);
+        new Controller(view, model);
     }
 }

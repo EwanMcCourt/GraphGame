@@ -41,8 +41,7 @@ public interface View {
     void showPathView(Path path, String label);
     void clearPathView();
     void addLeaderboardButton(String label, EventHandler<ActionEvent> eventHandler);
-    void addLoginTextField(ChangeListener<String> eventHandler);
-    void addRegisterTextField(ChangeListener<String> eventHandler);
+    void addLeaderboardTextField(ChangeListener<String> eventHandler);
     void addMenuButton(String label, EventHandler<ActionEvent> eventHandler);
     void addMenuTextField(ChangeListener<String> eventHandler);
     void addOptionsButton(String label, EventHandler<ActionEvent> eventHandler);

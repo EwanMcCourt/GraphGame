@@ -48,17 +48,11 @@ public class Controller {
         view.addDifficultyEventListener((observableValue, number, t1) -> setDifficulty(t1));
         view.setMaxDifficulty(model.getMaxPathLength());
         view.addLeaderboardButton("Login", e -> login(loginInput));
-        view.addLoginTextField((observableValue, oldValue, newValue) -> setLoginTextField(newValue));
+        view.addLeaderboardTextField((observableValue, oldValue, newValue) -> loginInput = newValue);
         view.addLeaderboardButton("Register", e -> register(registerInput));
-        view.addRegisterTextField((observableValue, oldValue, newValue) -> setRegisterTextField(newValue));
+        view.addLeaderboardTextField((observableValue, oldValue, newValue) -> registerInput = newValue);
 
         populateGraph();
-    }
-    private void setLoginTextField(String input) {
-        loginInput = input;
-    }
-    private void setRegisterTextField(String input) {
-        registerInput = input;
     }
     private void start(){
         gameOngoing = true;

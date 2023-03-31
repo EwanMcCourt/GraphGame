@@ -80,8 +80,6 @@ public class DisplayPath extends Pane {
             line.endXProperty().bind(spacing.multiply(2).subtract(radius.multiply(2)));
             pane.getChildren().add(line);
 
-            System.out.println(path.get((i+1)/2).getIndex());
-
             Text weightLabel = new Text(String.valueOf((int) path.get((i-1)/2).getWeight(path.get((i+1)/2))));
             sPane.getChildren().add(weightLabel);
 

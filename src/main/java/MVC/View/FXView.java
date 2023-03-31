@@ -261,18 +261,10 @@ public class FXView implements View{
         leaderboard.getChildren().add(button);
     }
     @Override
-    public void addLoginTextField(ChangeListener<String> eventHandler) {
+    public void addLeaderboardTextField(ChangeListener<String> eventHandler) {
         TextField textField = new TextField();
         textField.textProperty().addListener(eventHandler);
         leaderboard.getChildren().add(textField);
-
-    }
-    @Override
-    public void addRegisterTextField(ChangeListener<String> eventHandler) {
-        TextField textField = new TextField();
-        textField.textProperty().addListener(eventHandler);
-        leaderboard.getChildren().add(textField);
-
     }
     @Override
     public void addMenuButton(String label, EventHandler<ActionEvent> eventHandler) {

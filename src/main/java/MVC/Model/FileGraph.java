@@ -21,6 +21,9 @@ public class FileGraph implements Model {
             input = new BufferedReader(new FileReader(filename));
             final Pattern p = Pattern.compile("^([0-9]+) ([0-9]+) \\{'weight': ([0-9]+)}");
             String line = input.readLine();
+            if (line == null) {
+                throw new IllegalArgumentException("File is empty");
+            }
 
             while (line != null) {
                 Matcher m = p.matcher(line);

@@ -1,33 +1,28 @@
 package MVC.Controller;
 
-import MVC.View.View;
 import MVC.Model.Model;
-
-// Integral to game function
-import MVC.Model.Path;
 import MVC.Model.Point;
+import MVC.View.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 
 import java.io.IOException;
-import static java.lang.Math.round;
+import java.util.LinkedList;
 
 public class Controller {
     private final View view;
     private final Model model;
-    private Path selectedPath;
-    private Path optimalPath;
-    private Point source;
-    private Point target;
-    private Boolean gameOngoing = false;
-    private int difficulty = 3;
+    private LinkedList<Point> path = new LinkedList<>();
+    Point source;
+    Point target;
 
     public Controller(View view, Model model) {
         //Initialise Model
         this.model = model;
 
-//        source = this.model.getPoint(3);
-//        target = this.model.getPoint(13);
-//        Path path = model.getPath(source, target);
-//        path.print();
+        source = this.model.getPoint(3);
+        target = this.model.getPoint(13);
+        model.getPath(source, target).print();
 
         //Initialise View
         this.view = view;
@@ -38,71 +33,9 @@ public class Controller {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        view.addMenuButton("Start", e -> start());
-        view.addMenuButton("Stop", e -> stop());
-        view.addDifficultyEventListener((observableValue, number, t1) -> setDifficulty(t1));
-        view.setMaxDifficulty(model.getMaxPathLength());
-
-        //for demo purposes only - to be removed
-        view.addMenuTextField((observableValue, oldValue, newValue) -> test(newValue));
-        view.addOptionsTextField((observableValue, oldValue, newValue) -> test(newValue));
-        view.addOptionsButton("test", e -> System.out.println("test button pressed"));
-
-
         populateGraph();
-    }
-
-    private void test(String input) {
-        System.out.println(input);
-    }
-
-    private void start(){
-        gameOngoing = true;
-
-        // Clear Previous Game
-        view.clearHighlights();
-
-        // Pick Random Start And End Based On Difficulty
-        optimalPath = model.getRandomPathBySize(difficulty);
-        source = optimalPath.getFirst();
-        target = optimalPath.getLast();
-
-        // Initialise And Display New Path
-        selectedPath = new Path();
-        selectedPath.addLast(source);
-        view.displayPath(selectedPath);
-        view.showMoves(selectedPath);
-        view.clearPathView();
-        view.showPathView(selectedPath, "Selected Path:");
-
-        // Highlight Start And End Points
-        view.setStart(source);
-        view.setGoal(target);
-    }
-
-    private void stop(){
-        gameOngoing = false;
-        view.clearHighlights();
-        view.clearPathView();
-    }
-
-    private void finishGame() {
-        view.showPathView(selectedPath, "Your Path:");
-        view.showPathView(optimalPath, "Optimal Path:");
-        String message = String.format("Your path had a weight of %d, the most optimal path has a weight of %d.\nYou got a score of %d", selectedPath.getWeight().intValue(), optimalPath.getWeight().intValue(), getScore());
-        view.showInformationAlert("Congratulations!", message);
-    }
-
-    private int getScore() {
-        Double difference = Double.max(selectedPath.getWeight() - optimalPath.getWeight(), 0);
-        return Integer.max((int) (round((1-(difference/optimalPath.getWeight())) * ((double) (difficulty - 2) / (double) (model.getMaxPathLength() - 2))*1000)),0);
-    }
-
-    private void setDifficulty(Number difficultyNumber) {
-        int difficulty = difficultyNumber.intValue();
-        if (this.difficulty != difficulty) {
-            this.difficulty = difficulty;
-        }
+        clickPoint(source);
+        view.highlightNode(target, true);
     }
 
     private void populateGraph() {
@@ -113,76 +46,93 @@ public class Controller {
             }
         }
 
-        // Using Lambdas means that Controller is completely decoupled from JavaFX
-        view.populateEventHandlers(
-                clicked -> clickPoint(clicked.getPoint()),
-                hover -> hoverPoint(hover.getPoint(), true),
-                unhover -> hoverPoint(unhover.getPoint(), false)
-                );
-    }
-
-    public void hoverPoint(Point point, Boolean hover) {
-        // Check if game is active
-         if (!gameOngoing) {
-            return;
-        }
-
-        if (hover) {
-            view.showMoves(point);
-        } else {
-            view.hideMoves(point);
+        // https://www.tutorialspoint.com/javafx/javafx_event_handling.htm
+        for (DisplayNode node : view.getNodes()) {
+            node.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> clickPoint(node.getPoint()));
         }
     }
 
     public void clickPoint(Point point) {
-        // Check if game is active
-        if (!gameOngoing) {
+        Color selected, option, current, goal;
+        selected = Color.GREEN;
+        option = Color.SKYBLUE;
+        current = Color.ORANGE;
+        goal = Color.BLUE;
+
+        view.setHighlightColor(target, goal);
+
+        if (!path.isEmpty() && (path.getLast()==target || (path.contains(point) && !(path.getLast()==point)))) {
             return;
         }
 
-        // Checking valid Point to click
-        if(!selectedPath.isEmpty()) {
-            // Check if clicked point is already in the selected path
-            if(selectedPath.getPoints().contains(point) && point != selectedPath.getLast()) {
-                return;
+        if (path.isEmpty()) {
+            path.add(point);
+            view.setHighlightColor(point, current);
+            view.highlightNode(point, true);
+            for (Point neighbour : model.getNeighbours(point)) {
+                view.highlightNode(neighbour, true);
+                if(neighbour != target) {
+                    view.setHighlightColor(neighbour, option);
+                }
+                view.highlightConnection(point, neighbour, true);
+                view.setConnectionHighlightColor(point, neighbour, option);
             }
-            // Check if clicked point is neighbour of last point
-            if(!selectedPath.getLast().getNeighbours().contains(point) && point != selectedPath.getLast()) {
-                return;
+        } else if (path.getLast()==point && point != source) {
+            path.removeLast();
+            if (!path.isEmpty()) {
+                view.highlightConnection(point, path.getLast(), false);
             }
-            // Check if clicked point is source point
-            if(point == source) {
-                return;
+            view.highlightNode(point, false);
+            for (Point neighbour : model.getNeighbours(point)) {
+                if (path.isEmpty() || !path.contains(neighbour)) {
+                    if(neighbour != target) {
+                        view.highlightNode(neighbour, false);
+                    }
+                    view.highlightConnection(point, neighbour, false);
+                }
             }
-            // Check if clicked point is goal node
-            if(point == target) {
-                gameOngoing = false;
-                view.hideMoves(point);
+            if (!path.isEmpty()){
+                for (Point neighbour : model.getNeighbours(path.getLast())) {
+                    if (!path.contains(neighbour)) {
+                        view.highlightNode(neighbour, true);
+                        view.setHighlightColor(neighbour, option);
+                        view.highlightConnection(path.getLast(), neighbour, true);
+                        view.setConnectionHighlightColor(path.getLast(), neighbour, option);
+                    }
+                }
+                view.setHighlightColor(path.getLast(), current);
+            }
+        } else if (model.getNeighbours(path.getLast()).contains(point)) {
+            for (Point neighbour : model.getNeighbours(path.getLast())) {
+                if (!path.contains(neighbour) && neighbour != point) {
+                    view.highlightConnection(path.getLast(), neighbour, false);
+                    view.highlightNode(neighbour, false);
+                }
+            }
+            if (point == target) {
+                System.out.println("goal node");
+                view.setHighlightColor(path.getLast(), selected);
+                view.setConnectionHighlightColor(path.getLast(), point, selected);
+//                view.highlightConnection(path.getLast(), point, true);
+                path.addLast(point);
+            } else {
+                for (Point neighbour : model.getNeighbours(point)) {
+                    if (!path.contains(neighbour)) {
+                        view.highlightNode(neighbour, true);
+                        if(neighbour != target) {
+                            view.setHighlightColor(neighbour, option);
+                        }
+                        view.highlightConnection(point, neighbour, true);
+                        view.setConnectionHighlightColor(point, neighbour, option);
+                    }
+                }
+                view.setConnectionHighlightColor(path.getLast(), point, selected);
+                view.highlightConnection(path.getLast(), point, true);
+                view.setHighlightColor(point, selected);
+                view.setHighlightColor(path.getLast(), selected);
+                view.setHighlightColor(point, current);
+                path.addLast(point);
             }
         }
-
-        // Check whether adding or removing clicked point
-        if (!selectedPath.isEmpty() && point == selectedPath.getLast()) {
-            // Removing a Point
-            selectedPath.removeLast();
-        } else {
-            // Adding a Point
-            selectedPath.addLast(point);
-        }
-
-        // Updating display
-        view.clearHighlights();
-        view.displayPath(selectedPath);
-        view.clearPathView();
-        if(gameOngoing) {
-            view.showMoves(selectedPath);
-            view.showPathView(selectedPath, "Selected Path:");
-        } else {
-            finishGame();
-        }
-
-        // Keep start and end highlighted
-        view.setStart(source);
-        view.setGoal(target);
     }
 }

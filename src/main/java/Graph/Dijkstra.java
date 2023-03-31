@@ -6,10 +6,8 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class Dijkstra<N extends Node<N>> {
-    N source;
-    GraphADT<N> graph;
-    Map<N, Double> distance = new HashMap<>();
-    Map<N, N> previous = new HashMap<>();
+    private final N source;
+    private final Map<N, N> previous = new HashMap<>();
 
     public Dijkstra(N source, GraphADT<N> graph) {
         this(source, graph, false);
@@ -17,10 +15,10 @@ public class Dijkstra<N extends Node<N>> {
 
     public Dijkstra(N source, GraphADT<N> graph, Boolean uniformCost) {
         this.source = source;
-        this.graph = graph;
         N current = null;
         ArrayList<N> unvisited = new ArrayList<>();
 
+        Map<N, Double> distance = new HashMap<>();
         for (N node : graph.getNodes()) {
             unvisited.add(node);
             distance.put(node, Double.POSITIVE_INFINITY);
@@ -33,13 +31,9 @@ public class Dijkstra<N extends Node<N>> {
             for(N node : unvisited) {
                 if (current == null || distance.get(current) > distance.get(node)) {
                     current = node;
-//                    System.out.println("Current: "+current.getIndex());
                 }
             }
             unvisited.remove(current);
-//            if(graph.getNeighbours(current).isEmpty()) {
-//                System.out.println(current+" has no neighbours");
-//            }
             for (N neighbour : graph.getNeighbours(current)) {
                 if (unvisited.contains(neighbour)) {
                     double dist;
@@ -48,7 +42,6 @@ public class Dijkstra<N extends Node<N>> {
                     } else {
                         dist = distance.get(current) + graph.getWeight(current, neighbour);
                     }
-//                    System.out.format("Distance from %d to %d is %f\n", current.getIndex(), neighbour.getIndex(), dist);
                     if (dist < distance.get(neighbour)) {
                         distance.put(neighbour, dist);
                         previous.put(neighbour, current);
@@ -59,7 +52,6 @@ public class Dijkstra<N extends Node<N>> {
         }
     }
     public GraphPath<N> getGraphPath(N target) {
-//        System.out.format("Trying to find path from %d to %d\n",source,target);
         LinkedList<N> path = new LinkedList<>();
         if(source == target) {
             path.addFirst(target);

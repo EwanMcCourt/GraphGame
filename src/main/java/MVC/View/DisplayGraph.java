@@ -30,7 +30,6 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         protected double computeValue() {return 1.0 / (2.0 * (1.0 + (1.0 / Math.sin(Math.PI / numNodes.getValue()))));}
     };
     private final static double CENTRE_POINT_RADIUS_SCALE_FACTOR = 0.2;
-
     public DisplayGraph(SimpleDoubleProperty width, SimpleDoubleProperty height) {
         int minimumSize = 400;
         this.prefWidthProperty().bind(Bindings.max(width,minimumSize));
@@ -43,7 +42,7 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         centreX.bind(this.widthProperty().multiply(0.5));
         centreY.bind(this.heightProperty().multiply(0.5));
     }
-
+    @Override
     public void populateNodes(Set<Point> points) {
         this.getChildren().clear();
         this.displayNodes.clear();
@@ -136,15 +135,14 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         }
         update();
     }
-
+    @Override
     public Collection<DisplayNode> getDisplayNodes() {
         return displayNodes.values();
     }
-
     private void update() {
         numNodes.set(displayNodes.size());
     }
-
+    @Override
     public void addConnection(Point point1, Point point2, int weight) {
         QuadCurve curve = createCurve(point1, point2);
 
@@ -166,7 +164,6 @@ public class DisplayGraph extends Pane implements GraphDisplay {
 
         this.getChildren().addAll(highlightCurve, curve, tempHighlightCurve);
     }
-
     private QuadCurve createCurve(Point point1, Point point2) {
         QuadCurve curve = new QuadCurve();
 
@@ -181,8 +178,7 @@ public class DisplayGraph extends Pane implements GraphDisplay {
 
         return curve;
     }
-
-    public Color getWeightColor(int weight) {
+    private Color getWeightColor(int weight) {
         ArrayList<Color> colors = new ArrayList<>();
         if (weight > 10) {
             return Color.BLACK;
@@ -202,54 +198,58 @@ public class DisplayGraph extends Pane implements GraphDisplay {
 
         return colors.get(weight);
     }
-
+    @Override
     public void highlight(Point point, Boolean active) {
         displayNodes.get(point).setHighlight(active);
     }
+    @Override
     public void setHighlightColor(Point point, NodeColour color) {
         displayNodes.get(point).setHighlightColor(color);
     }
-
+    @Override
     public Boolean isHighlighted(Point point) {
         return displayNodes.get(point).isHighlighted();
     }
+    @Override
     public void highlightConnection(Point point1, Point point2, Boolean active) {
         displayNodes.get(point1).setConnectionHighlight(point2, active);
     }
+    @Override
     public void setConnectionHighlightColor(Point point1, Point point2, ConnectionColour color) {
         displayNodes.get(point1).setConnectionHighlightColor(point2, color);
     }
+    @Override
     public Boolean isConnectionHighlighted(Point point1, Point point2) {
         return displayNodes.get(point1).isConnectionHighlighted(point2);
     }
-
+    @Override
     public void tempHighlight(Point point, Boolean active) {
         displayNodes.get(point).setTempHighlight(active);
     }
+    @Override
     public void setTempHighlightColor(Point point, NodeColour color) {
         displayNodes.get(point).setTempHighlightColor(color);
     }
-
+    @Override
     public Boolean isTempHighlighted(Point point) {
         return displayNodes.get(point).isTempHighlighted();
     }
+    @Override
     public void tempHighlightConnection(Point point1, Point point2, Boolean active) {
         displayNodes.get(point1).setTempConnectionHighlight(point2, active);
     }
+    @Override
     public void setTempConnectionHighlightColor(Point point1, Point point2, ConnectionColour color) {
         displayNodes.get(point1).setTempConnectionHighlightColor(point2, color);
     }
+    @Override
     public Boolean isTempConnectionHighlighted(Point point1, Point point2) {
         return displayNodes.get(point1).isTempConnectionHighlighted(point2);
     }
-
+    @Override
     public void clearHighlights() {
         for (DisplayNode node : displayNodes.values()) {
             node.clearHighlights();
         }
-    }
-
-    public void clearHighlights(Point point) {
-            displayNodes.get(point).clearHighlights();
     }
 }

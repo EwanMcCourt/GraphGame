@@ -9,20 +9,16 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
-// Experimenting, Will Probably Remove
 public class DisplayPath extends Pane {
-    SimpleDoubleProperty shortAxis, longAxis, spacing, originX, originY, radius;
     private final static double HORIZONTAL_PADDING = 0.15;
     private final static double VERTICAL_PADDING = 0.5;
     public DisplayPath(Path path, String label) {
-        System.out.println("DisplayPath");
-        path.print();
-        shortAxis = new SimpleDoubleProperty();
-        longAxis = new SimpleDoubleProperty();
-        spacing = new SimpleDoubleProperty();
-        originX = new SimpleDoubleProperty();
-        originY = new SimpleDoubleProperty();
-        radius = new SimpleDoubleProperty();
+        SimpleDoubleProperty shortAxis = new SimpleDoubleProperty();
+        SimpleDoubleProperty longAxis = new SimpleDoubleProperty();
+        SimpleDoubleProperty spacing = new SimpleDoubleProperty();
+        SimpleDoubleProperty originX = new SimpleDoubleProperty();
+        SimpleDoubleProperty originY = new SimpleDoubleProperty();
+        SimpleDoubleProperty radius = new SimpleDoubleProperty();
         this.minHeightProperty().set(100);
         originX.bind(this.widthProperty().multiply(HORIZONTAL_PADDING/2));
         originY.bind(this.heightProperty().multiply(VERTICAL_PADDING/2));
@@ -31,7 +27,7 @@ public class DisplayPath extends Pane {
         spacing.bind(longAxis.divide((path.size()*2)-1));
 
 
-        Text weight = new Text("Weight: "+path.getWeight());
+        Text weight = new Text("Weight: "+path.getWeight().intValue());
         StackPane weightPane = new StackPane(weight);
 //        weightPane.layoutXProperty().bind(this.widthProperty().subtract(this.widthProperty().multiply(HORIZONTAL_PADDING)).subtract(weightPane.widthProperty().divide(2)));
         weightPane.layoutXProperty().bind(this.widthProperty().subtract(originX).subtract(weightPane.widthProperty()));
@@ -44,7 +40,7 @@ public class DisplayPath extends Pane {
         this.getChildren().addAll(weightPane, labelPane);
 
 //        radius.bind(Bindings.min(spacing.divide(2),Bindings.max(shortAxis.divide(2),50)));
-        radius.bind(Bindings.min(spacing.divide(2),shortAxis.divide(2)));
+        radius.bind(Bindings.min(spacing.divide(2), shortAxis.divide(2)));
 
         for (int i=0; i<(path.size()*2)-1; i+=2){
             SimpleDoubleProperty centreX = new SimpleDoubleProperty();

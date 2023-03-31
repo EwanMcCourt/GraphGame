@@ -21,6 +21,5 @@ public interface GraphDisplay {
     void tempHighlightConnection(Point point1, Point point2, Boolean active);
     void setTempConnectionHighlightColor(Point point1, Point point2, ConnectionColour color);
     Boolean isTempConnectionHighlighted(Point point1, Point point2);
-
     void clearHighlights();
 }

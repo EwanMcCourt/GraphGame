@@ -78,8 +78,6 @@ public class Controller {
         // Highlight Start And End Points
         view.setStart(source);
         view.setGoal(target);
-
-        optimalPath.print();
     }
 
     private void stop(){
@@ -91,8 +89,10 @@ public class Controller {
     private void finishGame() {
         view.showPathView(selectedPath, "Your Path:");
         view.showPathView(optimalPath, "Optimal Path:");
-        System.out.format("Congratulations! Your path had a weight of %f, the most optimal path has a weight of %f.\nYou got a score of %d",selectedPath.getWeight(), optimalPath.getWeight(), getScore());
+        String message = String.format("Your path had a weight of %d, the most optimal path has a weight of %d.\nYou got a score of %d", selectedPath.getWeight().intValue(), optimalPath.getWeight().intValue(), getScore());
+        view.showInformationAlert("Congratulations!", message);
     }
+
     private int getScore() {
         Double difference = Double.max(selectedPath.getWeight() - optimalPath.getWeight(), 0);
         return Integer.max((int) (round((1-(difference/optimalPath.getWeight())) * ((double) (difficulty - 2) / (double) (model.getMaxPathLength() - 2))*1000)),0);
@@ -113,7 +113,7 @@ public class Controller {
             }
         }
 
-        // Using Lambdas mean that Controller is completely decoupled from JavaFX
+        // Using Lambdas means that Controller is completely decoupled from JavaFX
         view.populateEventHandlers(
                 clicked -> clickPoint(clicked.getPoint()),
                 hover -> hoverPoint(hover.getPoint(), true),

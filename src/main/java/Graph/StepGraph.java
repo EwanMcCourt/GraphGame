@@ -3,10 +3,10 @@ package Graph;
 import java.util.*;
 
 public class StepGraph<N extends Node<N>> {
-    GraphADT<N> graph;
-    Map<N, Dijkstra<N>> dijkstras = new HashMap<>();
-    int[][] pathLength;
-    int maxLength = 0;
+    private final GraphADT<N> graph;
+    private final Map<N, Dijkstra<N>> dijkstras = new HashMap<>();
+    private final int[][] pathLength;
+    private int maxLength = 0;
 
     public StepGraph (GraphADT<N> graph) {
         this.graph = graph;
@@ -28,11 +28,6 @@ public class StepGraph<N extends Node<N>> {
                 pathLength[j][i] = result;
             }
         }
-
-//        System.out.println("StepGraph");
-//        for (int i = 0; i < list.size(); i++) {
-//            System.out.println(Arrays.toString(pathLength[i]));
-//        }
     }
 
     public GraphPath<N> getPathBySize(int size) {

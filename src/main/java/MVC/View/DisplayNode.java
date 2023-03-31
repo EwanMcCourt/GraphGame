@@ -14,7 +14,8 @@ import java.util.*;
 public class DisplayNode extends Group {
     private final Point point;
     private final Text label;
-    private final SimpleDoubleProperty centreY, centreX, radius, anchorY, anchorX;
+    private final SimpleDoubleProperty anchorY;
+    private final SimpleDoubleProperty anchorX;
     private final Circle tempHighlightCircle, highlightCircle, nodeCircle;
     private final Map<Point,DisplayNode> neighbours = new HashMap<>();
     private final Map<Point,QuadCurve> connections = new HashMap<>();
@@ -22,9 +23,6 @@ public class DisplayNode extends Group {
     private final Map<Point,QuadCurve> tempHighlightConnections = new HashMap<>();
     public DisplayNode(Point point, String text, SimpleDoubleProperty centreX, SimpleDoubleProperty centreY, SimpleDoubleProperty radius, SimpleDoubleProperty anchorX, SimpleDoubleProperty anchorY) {
         this.point = point;
-        this.centreX = centreX;
-        this.centreY = centreY;
-        this.radius = radius;
         this.anchorX = anchorX;
         this.anchorY = anchorY;
 
@@ -33,8 +31,6 @@ public class DisplayNode extends Group {
 
         pane.layoutXProperty().bind(centreX.subtract(pane.widthProperty().divide(2)));
         pane.layoutYProperty().bind(centreY.subtract(pane.heightProperty().divide(2)));
-
-//        pane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
         highlightCircle = new Circle();
         highlightCircle.radiusProperty().bind(radius.multiply(1.1));
@@ -55,17 +51,6 @@ public class DisplayNode extends Group {
         pane.getChildren().add(label);
 
         this.getChildren().add(pane);
-
-        Circle nodeAnchorCircle = new Circle();
-        nodeAnchorCircle.radiusProperty().bind(radius.multiply(0.1));
-        nodeAnchorCircle.centerXProperty().bind(anchorX);
-        nodeAnchorCircle.centerYProperty().bind(anchorY);
-        nodeAnchorCircle.setFill(Color.GREEN);
-//        this.getChildren().add(nodeAnchorCircle);
-
-        Circle centreCircle = new Circle(5.0, Color.BLUE);
-        centreCircle.centerXProperty().bind(centreX);
-        centreCircle.centerYProperty().bind(centreY);
     }
 
     public void setColor(Color color) {
@@ -156,9 +141,5 @@ public class DisplayNode extends Group {
         for (QuadCurve curve : highlightConnections.values()) {
             curve.setVisible(false);
         }
-    }
-
-    public void print() {
-        System.out.println("CentreX: "+centreX.getValue()+" centreY: "+centreY.getValue()+" radius: "+radius.getValue()+" anchorX: "+anchorX.getValue()+" anchorY: "+anchorY.getValue());
     }
 }

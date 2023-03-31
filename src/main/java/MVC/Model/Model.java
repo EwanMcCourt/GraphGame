@@ -1,5 +1,7 @@
 package MVC.Model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public interface Model {
@@ -10,4 +12,8 @@ public interface Model {
     Path getPath(Point source, Point target);
     int getMaxPathLength();
     Path getRandomPathBySize(int size);
+    ArrayList<String> getTopTenPlayers();
+    Player loadPlayer(String givenUsername);
+    List<Player>  loadPlayers();
+    void addPlayer(String givenUsername);
 }

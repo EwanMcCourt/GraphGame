@@ -159,8 +159,8 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         tempHighlightCurve.setStrokeWidth(5.0);
         tempHighlightCurve.setVisible(false);
 
-        displayNodes.get(point1).addConnection(point2, displayNodes.get(point2), curve, highlightCurve, tempHighlightCurve);
-        displayNodes.get(point2).addConnection(point1, displayNodes.get(point1), curve, highlightCurve, tempHighlightCurve);
+        displayNodes.get(point1).addConnection(point2, highlightCurve, tempHighlightCurve);
+        displayNodes.get(point2).addConnection(point1, highlightCurve, tempHighlightCurve);
 
         this.getChildren().addAll(highlightCurve, curve, tempHighlightCurve);
     }
@@ -207,20 +207,12 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         displayNodes.get(point).setHighlightColor(color);
     }
     @Override
-    public Boolean isHighlighted(Point point) {
-        return displayNodes.get(point).isHighlighted();
-    }
-    @Override
     public void highlightConnection(Point point1, Point point2, Boolean active) {
         displayNodes.get(point1).setConnectionHighlight(point2, active);
     }
     @Override
     public void setConnectionHighlightColor(Point point1, Point point2, ConnectionColour color) {
         displayNodes.get(point1).setConnectionHighlightColor(point2, color);
-    }
-    @Override
-    public Boolean isConnectionHighlighted(Point point1, Point point2) {
-        return displayNodes.get(point1).isConnectionHighlighted(point2);
     }
     @Override
     public void tempHighlight(Point point, Boolean active) {
@@ -231,20 +223,12 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         displayNodes.get(point).setTempHighlightColor(color);
     }
     @Override
-    public Boolean isTempHighlighted(Point point) {
-        return displayNodes.get(point).isTempHighlighted();
-    }
-    @Override
     public void tempHighlightConnection(Point point1, Point point2, Boolean active) {
         displayNodes.get(point1).setTempConnectionHighlight(point2, active);
     }
     @Override
     public void setTempConnectionHighlightColor(Point point1, Point point2, ConnectionColour color) {
         displayNodes.get(point1).setTempConnectionHighlightColor(point2, color);
-    }
-    @Override
-    public Boolean isTempConnectionHighlighted(Point point1, Point point2) {
-        return displayNodes.get(point1).isTempConnectionHighlighted(point2);
     }
     @Override
     public void clearHighlights() {

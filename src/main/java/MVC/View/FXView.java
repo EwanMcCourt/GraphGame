@@ -1,7 +1,6 @@
 package MVC.View;
 
 import MVC.Model.Path;
-import MVC.Model.Leaderboard;
 import MVC.Model.Point;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
@@ -19,7 +18,6 @@ import javafx.stage.Stage;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -29,6 +27,7 @@ public class FXView implements View{
     private GraphDisplay graph;
     private VBox options, leaderboard, output;
     private HBox menu;
+    private TextArea leaderboardTextArea;
     private Slider difficulty;
     public FXView(Stage stage) {
         this.stage = stage;
@@ -54,18 +53,13 @@ public class FXView implements View{
         graph = new DisplayGraph(graphWidth, graphHeight);
 
         // Create Leaderboard
-        TextArea leaderboardTextArea = new TextArea();
+        leaderboardTextArea = new TextArea();
         leaderboardTextArea.setEditable(false);
         leaderboardTextArea.setMouseTransparent(true);
         leaderboardTextArea.setFocusTraversable(false);
         leaderboardTextArea.appendText("LEADERBOARD:");
-        ArrayList topPlayers = Leaderboard.getTopTenPlayers();
-        for (int i = 0; i< topPlayers.size(); i++){
-            leaderboardTextArea.appendText("\n"+ topPlayers.get(i));
-
-        }
         leaderboardTextArea.setPrefSize(5,500);//change to dynamically size
-        leaderboardTextArea.setMaxWidth(100);
+        leaderboardTextArea.setMaxWidth(200);
         leaderboardTextArea.setMaxHeight(500);
 
         //Difficulty Slider
@@ -115,72 +109,30 @@ public class FXView implements View{
         stage.setTitle(title);
     }
     @Override
+    public void clearLeaderboard() {
+        leaderboardTextArea.clear();
+    }
+    @Override
+    public void populateLeaderboard(ArrayList<String> topPlayers) {
+        for (String topPlayer : topPlayers) {
+            leaderboardTextArea.appendText("\n" + topPlayer);
+        }
+    }
+    @Override
     public void populateGraph(Set<Point> points) {
         graph.populateNodes(points);
     }
     @Override
     public void populateEventHandlers(Consumer<? super DisplayNode> clicked, Consumer<? super DisplayNode> hover, Consumer<? super DisplayNode> unhover) {
-        for (DisplayNode node : getNodes()) {
+        for (DisplayNode node : graph.getDisplayNodes()) {
             node.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> clicked.accept(node));
             node.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> hover.accept(node));
             node.addEventFilter(MouseEvent.MOUSE_EXITED, e -> unhover.accept(node));
         }
     }
     @Override
-    public Collection<DisplayNode> getNodes() {
-        return graph.getDisplayNodes();
-    }
-    @Override
     public void addConnection(Point point1, Point point2, int weight) {
         graph.addConnection(point1, point2, weight);
-    }
-    @Override
-    public void highlightNode(Point point, Boolean active) {
-        graph.highlight(point, active);
-    }
-    @Override
-    public void setHighlightColor(Point point, NodeColour color) {
-        graph.setHighlightColor(point, color);
-    }
-    @Override
-    public Boolean isHighlighted(Point point1) {
-        return graph.isHighlighted(point1);
-    }
-    @Override
-    public void highlightConnection(Point point1, Point point2, Boolean active) {
-        graph.highlightConnection(point1, point2, active);
-    }
-    @Override
-    public void setConnectionHighlightColor(Point point1, Point point2, ConnectionColour color) {
-        graph.setConnectionHighlightColor(point1, point2, color);
-    }
-    @Override
-    public Boolean isConnectionHighlighted(Point point1, Point point2) {
-        return graph.isConnectionHighlighted(point1, point2);
-    }
-    @Override
-    public void tempHighlightNode(Point point, Boolean active) {
-        graph.tempHighlight(point, active);
-    }
-    @Override
-    public void setTempHighlightColor(Point point, NodeColour color) {
-        graph.setTempHighlightColor(point, color);
-    }
-    @Override
-    public Boolean isTempHighlighted(Point point1) {
-        return graph.isTempHighlighted(point1);
-    }
-    @Override
-    public void tempHighlightConnection(Point point1, Point point2, Boolean active) {
-        graph.tempHighlightConnection(point1, point2, active);
-    }
-    @Override
-    public void setTempConnectionHighlightColor(Point point1, Point point2, ConnectionColour color) {
-        graph.setTempConnectionHighlightColor(point1, point2, color);
-    }
-    @Override
-    public Boolean isTempConnectionHighlighted(Point point1, Point point2) {
-        return graph.isTempConnectionHighlighted(point1, point2);
     }
     @Override
     public void clearHighlights() {
@@ -193,13 +145,13 @@ public class FXView implements View{
         }
 
         for (int i = 0; i < path.size() - 1; i++) {
-            setConnectionHighlightColor(path.get(i), path.get(i + 1), ConnectionColour.SELECTED);
-            setHighlightColor(path.get(i), NodeColour.SELECTED);
-            highlightConnection(path.get(i), path.get(i + 1), true);
-            highlightNode(path.get(i), true);
+            graph.setConnectionHighlightColor(path.get(i), path.get(i + 1), ConnectionColour.SELECTED);
+            graph.setHighlightColor(path.get(i), NodeColour.SELECTED);
+            graph.highlightConnection(path.get(i), path.get(i + 1), true);
+            graph.highlight(path.get(i), true);
         }
-        setHighlightColor(path.getLast(), NodeColour.SELECTED);
-        highlightNode(path.getLast(), true);
+        graph.setHighlightColor(path.getLast(), NodeColour.SELECTED);
+        graph.highlight(path.getLast(), true);
     }
     @Override
     public void showMoves(Path path) {
@@ -210,41 +162,41 @@ public class FXView implements View{
         Point lastPoint = path.getLast();
         for (Point point : lastPoint.getNeighbours()) {
             if(!path.getPoints().contains(point)) {
-                setConnectionHighlightColor(lastPoint, point, ConnectionColour.AVAILABLE);
-                setHighlightColor(point, NodeColour.AVAILABLE);
-                highlightConnection(lastPoint, point, true);
-                highlightNode(point, true);
+                graph.setConnectionHighlightColor(lastPoint, point, ConnectionColour.AVAILABLE);
+                graph.setHighlightColor(point, NodeColour.AVAILABLE);
+                graph.highlightConnection(lastPoint, point, true);
+                graph.highlight(point, true);
             }
         }
     }
     @Override
     public void showMoves(Point point) {
-        setTempHighlightColor(point, NodeColour.CURRENT);
-        tempHighlightNode(point, true);
+        graph.setTempHighlightColor(point, NodeColour.CURRENT);
+        graph.tempHighlight(point, true);
         for (Point neighbour : point.getNeighbours()) {
-                setTempConnectionHighlightColor(point, neighbour, ConnectionColour.CURRENT);
-                setTempHighlightColor(neighbour, NodeColour.CURRENT);
-                tempHighlightConnection(point, neighbour, true);
-                tempHighlightNode(neighbour, true);
+                graph.setTempConnectionHighlightColor(point, neighbour, ConnectionColour.CURRENT);
+                graph.setTempHighlightColor(neighbour, NodeColour.CURRENT);
+                graph.tempHighlightConnection(point, neighbour, true);
+                graph.tempHighlight(neighbour, true);
         }
     }
     @Override
     public void hideMoves(Point point) {
-        tempHighlightNode(point, false);
+        graph.tempHighlight(point, false);
         for (Point neighbour : point.getNeighbours()) {
-            tempHighlightConnection(point, neighbour, false);
-            tempHighlightNode(neighbour, false);
+            graph.tempHighlightConnection(point, neighbour, false);
+            graph.tempHighlight(neighbour, false);
         }
     }
     @Override
     public void setStart(Point point) {
-        setHighlightColor(point, NodeColour.START);
-        highlightNode(point,true);
+        graph.setHighlightColor(point, NodeColour.START);
+        graph.highlight(point,true);
     }
     @Override
     public void setGoal(Point point) {
-        setHighlightColor(point, NodeColour.GOAL);
-        highlightNode(point,true);
+        graph.setHighlightColor(point, NodeColour.GOAL);
+        graph.highlight(point,true);
     }
     @Override
     public void showPathView(Path path, String label) {
@@ -271,24 +223,6 @@ public class FXView implements View{
         Button button = new Button(label);
         button.setOnAction(eventHandler);
         menu.getChildren().add(button);
-    }
-    @Override
-    public void addMenuTextField(ChangeListener<String> eventHandler) {
-        TextField textField = new TextField();
-        textField.textProperty().addListener(eventHandler);
-        menu.getChildren().add(textField);
-    }
-    @Override
-    public void addOptionsButton(String label, EventHandler<ActionEvent> eventHandler) {
-        Button button = new Button(label);
-        button.setOnAction(eventHandler);
-        options.getChildren().add(button);
-    }
-    @Override
-    public void addOptionsTextField(ChangeListener<String> eventHandler) {
-        TextField textField = new TextField();
-        textField.textProperty().addListener(eventHandler);
-        options.getChildren().add(textField);
     }
     @Override
     public void setMaxDifficulty(int maxDifficulty) {

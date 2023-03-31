@@ -5,6 +5,8 @@ import Graph.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -73,5 +75,21 @@ public class FileGraph implements Model {
     @Override
     public Path getRandomPathBySize(int size) {
         return new Path(stepGraph.getPathBySize(size));
+    }
+    @Override
+    public ArrayList<String> getTopTenPlayers() {
+        return Leaderboard.getTopTenPlayers();
+    }
+    @Override
+    public Player loadPlayer(String givenUsername) {
+        return Leaderboard.loadPlayer(givenUsername);
+    }
+    @Override
+    public List<Player> loadPlayers() {
+        return Leaderboard.loadPlayers();
+    }
+    @Override
+    public void addPlayer(String givenUsername) {
+        Leaderboard.addPlayer(givenUsername);
     }
 }

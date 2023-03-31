@@ -1,7 +1,7 @@
 package MVC.Model;
 public class Player {
 
-    private String username;
+    private final String username;
     private int gamesPlayed;
 
 

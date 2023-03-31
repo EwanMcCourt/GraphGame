@@ -7,10 +7,8 @@ import MVC.Model.Model;
 import MVC.Model.Path;
 import MVC.Model.Point;
 import MVC.Model.Player;
-import MVC.Model.Leaderboard;
 
 import java.io.IOException;
-import java.util.List;
 
 import static java.lang.Math.round;
 
@@ -47,6 +45,7 @@ public class Controller {
         view.addMenuButton("Stop", e -> stop());
         view.addDifficultyEventListener((observableValue, number, t1) -> setDifficulty(t1));
         view.setMaxDifficulty(model.getMaxPathLength());
+        view.populateLeaderboard(model.getTopTenPlayers());
         view.addLeaderboardButton("Login", e -> login(loginInput));
         view.addLeaderboardTextField((observableValue, oldValue, newValue) -> loginInput = newValue);
         view.addLeaderboardButton("Register", e -> register(registerInput));
@@ -95,7 +94,7 @@ public class Controller {
     private void login(String givenUsername) {
         Player player;
 
-        player = Leaderboard.loadPlayer(givenUsername);
+        player = model.loadPlayer(givenUsername);
         if (player == null){
             view.showErrorAlert("Input not valid", "This user does not exist. If you want to create a new user, please register.");
         }else{
@@ -103,17 +102,12 @@ public class Controller {
         }
     }
     private void register(String givenUsername) {
-        Player player;
-        List<Player> players;
-        givenUsername =givenUsername.replaceAll("\\s+","");
+        givenUsername = givenUsername.replaceAll("\\s+","");
 
-        player = Leaderboard.loadPlayer(givenUsername);
-        players = Leaderboard.loadPlayers();
-
-        if (players.contains(player) || givenUsername.isEmpty()){
+        if (model.loadPlayers().contains(model.loadPlayer(givenUsername)) || givenUsername.isEmpty()){
             view.showErrorAlert("Input not valid", "This user already exists. Please enter a unique username.");
         }else{
-            Leaderboard.addPlayer(givenUsername);
+            model.addPlayer(givenUsername);
             view.showInformationAlert("Registration Successful", "You have now registered the account: " + givenUsername);
         }
     }

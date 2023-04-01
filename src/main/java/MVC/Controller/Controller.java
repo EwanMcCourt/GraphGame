@@ -10,6 +10,7 @@ import MVC.Model.Player;
 
 import java.io.IOException;
 
+import static MVC.Model.Leaderboard.savePlayers;
 import static java.lang.Math.round;
 
 public class Controller {
@@ -22,7 +23,7 @@ public class Controller {
     private Boolean gameOngoing = false;
     private int difficulty = 3;
     private String loginInput, registerInput;
-
+    private Player player;
     public Controller(View view, Model model) {
         //Initialise Model
         this.model = model;
@@ -80,19 +81,26 @@ public class Controller {
         gameOngoing = false;
         view.clearHighlights();
         view.clearPathView();
+
     }
     private void finishGame() {
         view.showPathView(selectedPath, "Your Path:");
         view.showPathView(optimalPath, "Optimal Path:");
         String message = String.format("Your path had a weight of %d, the most optimal path has a weight of %d.\nYou got a score of %d", selectedPath.getWeight().intValue(), optimalPath.getWeight().intValue(), getScore());
         view.showInformationAlert("Congratulations!", message);
+        if (player != null){
+            player.updateHighScore(getScore());
+            savePlayers();
+        }
+
+
     }
     private int getScore() {
         Double difference = Double.max(selectedPath.getWeight() - optimalPath.getWeight(), 0);
         return Integer.max((int) (round((1-(difference/optimalPath.getWeight())) * ((double) (difficulty - 2) / (double) (model.getMaxPathLength() - 2))*1000)),0);
     }
     private void login(String givenUsername) {
-        Player player;
+
 
         player = model.loadPlayer(givenUsername);
         if (player == null){

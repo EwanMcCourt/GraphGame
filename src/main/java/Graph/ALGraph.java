@@ -36,11 +36,6 @@ public class ALGraph<N extends Node<N>> implements GraphADT<N> {
     public Set<N> getNodes() {
         return nodes;
     }
-    @Override
-    public Set<N> getNeighbours(N source) {
-        return source.getNeighbours();
-    }
-
 }
 
 

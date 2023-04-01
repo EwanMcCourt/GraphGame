@@ -8,5 +8,4 @@ public interface GraphADT<N extends Node<N>> {
     double getWeight(N source, N target);
     N getNode(int index);
     Set<N> getNodes();
-    Set<N> getNeighbours(N source);
 }

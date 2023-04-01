@@ -34,7 +34,7 @@ public class Dijkstra<N extends Node<N>> {
                 }
             }
             unvisited.remove(current);
-            for (N neighbour : graph.getNeighbours(current)) {
+            for (N neighbour : current.getNeighbours()) {
                 if (unvisited.contains(neighbour)) {
                     double dist;
                     if (uniformCost) {

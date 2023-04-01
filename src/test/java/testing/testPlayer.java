@@ -1,8 +1,9 @@
 package testing;
 import MVC.Model.Player;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+//import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class testPlayer {
     Player testPlayer = new Player("test", 0);
@@ -21,9 +22,6 @@ public class testPlayer {
 
     }
     @Test
-    public void TestGetGamesPlayed() {
-        assertEquals(testPlayer.getGamesPlayed(), 0);
-    }
     public void TestToString() {
         assertEquals(testPlayer.toString(), "test 0");
     }

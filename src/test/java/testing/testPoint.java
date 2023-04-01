@@ -1,12 +1,13 @@
 package testing;
 import MVC.Model.Point;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class testPoint {
 
     Point testPoint = new Point(1);

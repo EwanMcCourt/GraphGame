@@ -13,15 +13,23 @@ public class testPoint {
     Point testPoint2 = new Point(2);
 
     @Test
-    public void testGetWeight(){
+    public void testGetWeightWithoutConnection(){
         assertEquals(testPoint.getWeight(testPoint2),  Double.POSITIVE_INFINITY, 0);
+
+
+    }
+    @Test
+
+    public void testGetWeightWithConnection(){
         testPoint.addConnection(testPoint2, 100);
         assertEquals(testPoint.getWeight(testPoint2),  100, 0);
     }
     @Test
-    public void testGetNeighbours(){
+    public void testGetNeighboursWithoutConnection(){
         Set<Point> empty = new HashSet<>();
         assertEquals(testPoint.getNeighbours(), empty);
+    }
+    @Test public void testGetNeighboursWithConnection(){
         testPoint.addConnection(testPoint2, 100);
         Set<Point> expected = new HashSet<>();
         expected.add(testPoint2);

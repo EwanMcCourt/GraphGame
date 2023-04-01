@@ -46,7 +46,7 @@ public class Leaderboard{
             writing = new FileWriter(file);
 
             for (Player player : leaderboard) {
-                writing.append(player.getUsername()).append(" ").append(String.valueOf(player.getGamesPlayed())).append("\n");
+                writing.append(player.getUsername()).append(" ").append(String.valueOf(player.getHighScore())).append("\n");
             }
             writing.close();
         }
@@ -65,9 +65,9 @@ public class Leaderboard{
 
                 String username = input.next();
 
-                int gamesPlayed = input.nextInt();
+                int highScore = input.nextInt();
 
-                leaderboard.add(new Player(username,gamesPlayed));
+                leaderboard.add(new Player(username,highScore));
             }
             input.close();
 
@@ -89,16 +89,16 @@ public class Leaderboard{
 
                 String username = input.next();
 
-                int gamesPlayed = input.nextInt();
+                int highScore = input.nextInt();
 
-                allPlayers.add(new Player( username, gamesPlayed));
+                allPlayers.add(new Player( username, highScore));
             }
             input.close();
 
         } catch (InputMismatchException | FileNotFoundException e) {
             System.err.format("Sorry, either the file does not exist or a vital component from them is missing\n");
         }
-        allPlayers.sort(Comparator.comparing(Player::getGamesPlayed, Comparator.reverseOrder()));
+        allPlayers.sort(Comparator.comparing(Player::getHighScore, Comparator.reverseOrder()));
         if (allPlayers.size()<10){
 
             for (Player allPlayer : allPlayers) {

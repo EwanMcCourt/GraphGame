@@ -2,16 +2,16 @@ package MVC.Model;
 public class Player {
 
     private final String username;
-    private int gamesPlayed;
+
+    private int highscore;
 
 
 
-
-    public Player( String username, int gamesPlayed) {
+    public Player( String username, int highscore) {
 
         this.username = username;
 
-        this.gamesPlayed = gamesPlayed;
+        this.highscore = highscore;
 
     }
 
@@ -20,23 +20,22 @@ public class Player {
     }
 
 
-    public int getGamesPlayed() {
-        return this.gamesPlayed;
+    public int getHighScore() {return this.highscore;
     }
-    public void incrementGamesPlayed() {
-        this.gamesPlayed++;
+    public void updateHighScore(int newScore) {
+        if (newScore > highscore){
+            this.highscore = newScore;
+        }
+
     }
-
-
     public void printDetails() {
         System.out.println("Username " + getUsername());
-        System.out.println("Games played: "+ getGamesPlayed());
-
+        System.out.println("High score: "+ getHighScore());
     }
 
     @Override
     public String toString() {
-        return  username + " " + gamesPlayed;
+        return  username + " "  +highscore;
     }
 
     @Override
@@ -58,7 +57,7 @@ public class Player {
 
         // Compare the data members and return accordingly
         return username.equals(c.username)
-                && Double.compare(gamesPlayed, c.gamesPlayed) == 0;
+                && Double.compare(highscore, c.highscore) == 0;
     }
 
 }

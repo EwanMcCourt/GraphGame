@@ -28,11 +28,6 @@ public class Controller {
         //Initialise Model
         this.model = model;
 
-//        source = this.model.getPoint(3);
-//        target = this.model.getPoint(13);
-//        Path path = model.getPath(source, target);
-//        path.print();
-
         //Initialise View
         this.view = view;
         view.initialise();
@@ -88,7 +83,7 @@ public class Controller {
         view.showPathView(optimalPath, "Optimal Path:");
         String message = String.format("Your path had a weight of %d, the most optimal path has a weight of %d.\nYou got a score of %d", selectedPath.getWeight().intValue(), optimalPath.getWeight().intValue(), getScore());
         view.showInformationAlert("Congratulations!", message);
-        if (player != null){
+        if (player != null){ //Checks if the player is logged in so their high score can potentially be updated
             player.updateHighScore(getScore());
             savePlayers();
         }
@@ -110,7 +105,7 @@ public class Controller {
         }
     }
     private void register(String givenUsername) {
-        givenUsername = givenUsername.replaceAll("\\s+","");
+        givenUsername = givenUsername.replaceAll("\\s+",""); //formats the input for consistency and to reduce errors
 
         if (model.loadPlayers().contains(model.loadPlayer(givenUsername)) || givenUsername.isEmpty()){
             view.showErrorAlert("Input not valid", "This user already exists. Please enter a unique username.");

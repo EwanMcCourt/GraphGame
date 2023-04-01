@@ -45,6 +45,7 @@ public class Leaderboard{
 
             writing = new FileWriter(file);
 
+            //Writes and saves all players in the leaderboard array to the text file
             for (Player player : leaderboard) {
                 writing.append(player.getUsername()).append(" ").append(String.valueOf(player.getHighScore())).append("\n");
             }
@@ -58,10 +59,10 @@ public class Leaderboard{
 
     public static List<Player> loadPlayers() {
         try {
-            leaderboard.clear();
+            leaderboard.clear(); //makes sure the leaderboard array is empty before adding anything new
             Scanner input = new Scanner(file);
 
-            while (input.hasNext()) {
+            while (input.hasNext()) { //adds each players details to the array
 
                 String username = input.next();
 
@@ -80,26 +81,12 @@ public class Leaderboard{
 
     public static ArrayList<String> getTopTenPlayers() {
 
-        List<Player> allPlayers = new ArrayList<>();
+        List<Player> allPlayers;
         ArrayList<String> topPlayers = new ArrayList<>();
-        try {
-            Scanner input = new Scanner(file);
-            while (input.hasNext()) {
+        allPlayers = loadPlayers();
 
-
-                String username = input.next();
-
-                int highScore = input.nextInt();
-
-                allPlayers.add(new Player( username, highScore));
-            }
-            input.close();
-
-        } catch (InputMismatchException | FileNotFoundException e) {
-            System.err.format("Sorry, either the file does not exist or a vital component from them is missing\n");
-        }
-        allPlayers.sort(Comparator.comparing(Player::getHighScore, Comparator.reverseOrder()));
-        if (allPlayers.size()<10){
+        allPlayers.sort(Comparator.comparing(Player::getHighScore, Comparator.reverseOrder())); //sorts all the players into an order based on their highscore
+        if (allPlayers.size()<10){ //Checks if there is already less than 10 players so we do not try and add a player that does not exist
 
             for (Player allPlayer : allPlayers) {
 
@@ -123,7 +110,7 @@ public class Leaderboard{
 
         try {
             Scanner reader = new Scanner(file);
-            for (Player player : leaderboard) {
+            for (Player player : leaderboard) { //loops through all players and when the given username matches a player it returns that players information
 
                 if (player.getUsername().equals(givenUsername)) {
 

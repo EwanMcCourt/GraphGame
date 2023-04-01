@@ -1,8 +1,11 @@
 Ewan 22
 NotEwan 1
 Kyle 0
-john 0
+john 111
 te 0
 Test 0
 frank 111
 MrTestMan 111
+Simon 111
+Bob 0
+eleven 0

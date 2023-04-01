@@ -239,6 +239,7 @@ public class FXView implements View{
         Alert alert = new Alert(type);
         alert.setHeaderText(header);
         alert.setContentText(content);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         alert.show();
     }
     @Override

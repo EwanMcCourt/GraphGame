@@ -42,9 +42,6 @@ public class FXView implements View{
         menu = new HBox();
         Scene scene = new Scene(root, Color.INDIGO);
 
-        // Adjust Sizing
-        output.minHeightProperty().set(100);
-
         // Create graph display
         SimpleDoubleProperty graphWidth = new SimpleDoubleProperty();
         SimpleDoubleProperty graphHeight = new SimpleDoubleProperty();
@@ -75,6 +72,9 @@ public class FXView implements View{
         Text difficultyLabel = new Text("Difficulty");
         Text currentDifficulty = new Text();
         currentDifficulty.textProperty().bind(difficulty.valueProperty().asString());
+
+        // Adjust Sizing
+        output.minHeightProperty().set(100);
 
         //add to layouts
         options.getChildren().addAll(difficultyLabel, difficulty, currentDifficulty);

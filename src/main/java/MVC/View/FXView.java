@@ -19,7 +19,7 @@ import javafx.stage.Stage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Set;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class FXView implements View{
@@ -113,7 +113,7 @@ public class FXView implements View{
         leaderboardTextArea.clear();
     }
     @Override
-    public void populateLeaderboard(ArrayList<String> topPlayers) {
+    public void populateLeaderboard(List<String> topPlayers) {
         for (String topPlayer : topPlayers) {
             leaderboardTextArea.appendText("\n" + topPlayer);
         }

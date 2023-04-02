@@ -7,7 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -16,7 +16,7 @@ public interface View {
     void setIcon(String filename) throws IOException;
     void setTitle(String title);
     void clearLeaderboard();
-    void populateLeaderboard(ArrayList<String> topPlayers);
+    void populateLeaderboard(List<String> topPlayers);
     void populateGraph(Set<Point> points);
     void populateEventHandlers(Consumer<? super DisplayNode> clicked, Consumer<? super DisplayNode> hover, Consumer<? super DisplayNode> unhover);
     void addConnection(Point point1, Point point2, int weight);

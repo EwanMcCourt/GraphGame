@@ -51,6 +51,9 @@ public class GraphPath<N extends Node<N>> {
         nodes.add(node);
     }
     public void removeLast() {
+        if(nodes.isEmpty()){
+            return;
+        }
         nodes.remove(nodes.size()-1);
         if(!nodes.isEmpty()) {
             weights.remove(weights.size()-1);

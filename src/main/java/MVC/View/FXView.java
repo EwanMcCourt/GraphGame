@@ -19,7 +19,7 @@ import javafx.stage.Stage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Set;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class FXView implements View{
@@ -41,9 +41,6 @@ public class FXView implements View{
         output =  new VBox();
         menu = new HBox();
         Scene scene = new Scene(root, Color.INDIGO);
-
-        // Adjust Sizing
-        output.minHeightProperty().set(100);
 
         // Create graph display
         SimpleDoubleProperty graphWidth = new SimpleDoubleProperty();
@@ -75,6 +72,9 @@ public class FXView implements View{
         Text difficultyLabel = new Text("Difficulty");
         Text currentDifficulty = new Text();
         currentDifficulty.textProperty().bind(difficulty.valueProperty().asString());
+
+        // Adjust Sizing
+        output.minHeightProperty().set(100);
 
         //add to layouts
         options.getChildren().addAll(difficultyLabel, difficulty, currentDifficulty);
@@ -113,7 +113,7 @@ public class FXView implements View{
         leaderboardTextArea.clear();
     }
     @Override
-    public void populateLeaderboard(ArrayList<String> topPlayers) {
+    public void populateLeaderboard(List<String> topPlayers) {
         for (String topPlayer : topPlayers) {
             leaderboardTextArea.appendText("\n" + topPlayer);
         }

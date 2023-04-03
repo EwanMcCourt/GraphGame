@@ -18,11 +18,6 @@ public class ALGraph<N extends Node<N>> implements GraphADT<N> {
         if(bidirectional) { target.addConnection(source, weight); }
         source.addConnection(target, weight);
     }
-
-    @Override
-    public double getWeight(N source, N target) {
-        return source.getWeight(target);
-    }
     @Override
     public N getNode(int index) {
         for (N node : nodes) {

@@ -40,7 +40,7 @@ public class Dijkstra<N extends Node<N>> {
                     if (uniformCost) {
                         dist = distance.get(current) + 1;
                     } else {
-                        dist = distance.get(current) + graph.getWeight(current, neighbour);
+                        dist = distance.get(current) + current.getWeight(neighbour);
                     }
                     if (dist < distance.get(neighbour)) {
                         distance.put(neighbour, dist);

@@ -1,7 +1,6 @@
 package Graph;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class GraphPath<N extends Node<N>> {
@@ -12,7 +11,7 @@ public class GraphPath<N extends Node<N>> {
         this.nodes = new ArrayList<>();
         this.weights = new ArrayList<>();
     }
-    public GraphPath(LinkedList<N> nodes) {
+    public GraphPath(List<N> nodes) {
         this.nodes = nodes;
         this.weights = new ArrayList<>();
         if(nodes.isEmpty()) {
@@ -21,10 +20,6 @@ public class GraphPath<N extends Node<N>> {
 
         for (int i=0; i<nodes.size()-1; i++) {
             weights.add(nodes.get(i).getWeight(nodes.get(i+1)));
-
-            if(weights.get(i) == Double.POSITIVE_INFINITY) {
-                break;
-            }
         }
     }
     public GraphPath(GraphPath<N> graphPath) {
@@ -56,6 +51,9 @@ public class GraphPath<N extends Node<N>> {
         nodes.add(node);
     }
     public void removeLast() {
+        if(nodes.isEmpty()){
+            return;
+        }
         nodes.remove(nodes.size()-1);
         if(!nodes.isEmpty()) {
             weights.remove(weights.size()-1);

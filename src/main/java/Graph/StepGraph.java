@@ -35,7 +35,7 @@ public class StepGraph<N extends Node<N>> {
         ArrayList<GraphPath<N>> candidates;
 
         candidates = getPathSizeCandidates(size);
-        while (candidates.isEmpty()) {
+        while (candidates.isEmpty() && lower > 1 && upper < maxLength) {
             System.out.format("Path with size %d or %d not found.", lower, upper);
             upper++;
             lower--;
@@ -43,6 +43,9 @@ public class StepGraph<N extends Node<N>> {
             candidates.addAll(getPathSizeCandidates(lower));
         }
 
+        if (candidates.isEmpty()) {
+            return null;
+        }
         return candidates.get(new Random().nextInt(candidates.size()));
     }
 
@@ -51,7 +54,7 @@ public class StepGraph<N extends Node<N>> {
         ArrayList<N> list = new ArrayList<>(graph.getNodes());
 
         for (int i = 0; i < pathLength.length; i++) {
-            for (int j = i; j < pathLength.length; j++) {
+            for (int j = 0; j < pathLength.length; j++) {
                 if (pathLength[i][j] == size) {
                     candidates.add(dijkstras.get(list.get(i)).getGraphPath(list.get(j)));
                 }

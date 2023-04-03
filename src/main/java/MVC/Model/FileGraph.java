@@ -53,20 +53,12 @@ public class FileGraph implements Model {
         return source.getWeight(target);
     }
     @Override
-    public Point getPoint(int index) {
-        return graph.getNode(index);
-    }
-    @Override
     public Set<Point> getPoints() {
         return graph.getNodes();
     }
     @Override
     public Set<Point> getNeighbours(Point source) {
         return source.getNeighbours();
-    }
-    @Override
-    public Path getPath(Point source, Point target) {
-        return new Path(new Dijkstra<>(source, graph).getGraphPath(target));
     }
     @Override
     public int getMaxPathLength() {

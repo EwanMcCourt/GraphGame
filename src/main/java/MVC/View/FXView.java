@@ -240,6 +240,10 @@ public class FXView implements View{
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+        if (!stage.getIcons().isEmpty()) {
+            alertStage.getIcons().add(stage.getIcons().get(0));
+        }
         alert.show();
     }
     @Override

@@ -14,11 +14,11 @@ import java.util.regex.Pattern;
 public class FileGraph implements Model {
     private final GraphADT<Point> graph;
     private final StepGraph<Point> stepGraph;
-    public FileGraph(String filename) {
+    public FileGraph(String filepath) {
         graph = new ALGraph<>();
         BufferedReader input;
         try {
-            input = new BufferedReader(new FileReader(filename));
+            input = new BufferedReader(new FileReader(filepath));
             final Pattern p = Pattern.compile("^([0-9]+) ([0-9]+) \\{'weight': ([0-9]+)}");
             String line = input.readLine();
 
@@ -53,20 +53,12 @@ public class FileGraph implements Model {
         return source.getWeight(target);
     }
     @Override
-    public Point getPoint(int index) {
-        return graph.getNode(index);
-    }
-    @Override
     public Set<Point> getPoints() {
         return graph.getNodes();
     }
     @Override
     public Set<Point> getNeighbours(Point source) {
         return source.getNeighbours();
-    }
-    @Override
-    public Path getPath(Point source, Point target) {
-        return new Path(new Dijkstra<>(source, graph).getGraphPath(target));
     }
     @Override
     public int getMaxPathLength() {

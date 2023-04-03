@@ -135,7 +135,7 @@ public class Controller {
                 unhover -> hoverPoint(unhover.getPoint(), false)
                 );
     }
-    public void hoverPoint(Point point, Boolean hover) {
+    private void hoverPoint(Point point, Boolean hover) {
         // Check if game is active
          if (!gameOngoing) {
             return;
@@ -147,7 +147,7 @@ public class Controller {
             view.hideMoves(point);
         }
     }
-    public void clickPoint(Point point) {
+    private void clickPoint(Point point) {
         // Check if game is active
         if (!gameOngoing) {
             return;

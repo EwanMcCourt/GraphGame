@@ -1,9 +1,6 @@
 package testing;
 
-import Graph.ALGraph;
 import Graph.GraphPath;
-import Graph.Node;
-import Graph.StepGraph;
 import MVC.Model.Path;
 import MVC.Model.Point;
 import org.junit.jupiter.api.Test;
@@ -15,11 +12,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class testPath {
-    LinkedList<Node> list = new LinkedList<>();
-    Point point1 = new Point(1);
-    Point point2 = new Point(2);
-    GraphPath graphPath = new GraphPath<>(list);
-    Path path2 = new Path(graphPath);
+    final LinkedList<Point> list = new LinkedList<>();
+    final Point point1 = new Point(1);
+    final Point point2 = new Point(2);
+    final GraphPath<Point> graphPath = new GraphPath<>(list);
+    final Path path2 = new Path(graphPath);
 
     @Test
     public void testGetPoints(){

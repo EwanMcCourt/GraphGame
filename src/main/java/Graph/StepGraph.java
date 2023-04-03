@@ -19,14 +19,16 @@ public class StepGraph<N extends Node<N>> {
 
         for (int i = 0; i < list.size(); i++) {
             pathLength[i][i] = 0;
-            for (int j = i; j < list.size(); j++) {
+            for (int j = 0; j < list.size(); j++) {
                 int result = dijkstras.get(list.get(i)).getGraphPath(list.get(j)).getNodes().size();
                 if (result>maxLength) {
                     maxLength = result;
                 }
                 pathLength[i][j] = result;
-                pathLength[j][i] = result;
             }
+        }
+        for (int[] ints : pathLength) {
+            System.out.println(Arrays.toString(ints));
         }
     }
 

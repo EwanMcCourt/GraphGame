@@ -3,16 +3,17 @@ import MVC.Model.Player;
 import org.junit.jupiter.api.Test;
 
 //import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class testPlayer {
-    Player testPlayer = new Player("test", 0);
-    Player testPlayer2 = new Player("test2", 0);
+    final Player testPlayer = new Player("test", 0);
+    final Player testPlayer2 = new Player("test2", 0);
     @Test
     public void TestEquals(){
 
-        assertEquals( testPlayer.equals(testPlayer) ,true );
-        assertEquals( testPlayer.equals(testPlayer2) ,false );
+        assertTrue(testPlayer.equals(testPlayer));
+        assertFalse(testPlayer.equals(testPlayer2));
 
 
     }

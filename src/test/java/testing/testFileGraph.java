@@ -19,14 +19,10 @@ public class testFileGraph {
     @Test
     public void testFileGraphEmptyFile() {
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            Model model2 = new FileGraph("src/main/resources/MVC/Model/blank.txt");
-        });
+        assertThrows(IllegalArgumentException.class, () -> new FileGraph("src/main/resources/MVC/Model/blank.txt"));
     }
     @Test
     public void testFileGraphNoFile() {
-        assertThrows(RuntimeException.class, () -> {
-            Model model3 = new FileGraph("src/main/resources/MVC/Model/doesntexist.txt");
-        });
+        assertThrows(RuntimeException.class, () -> new FileGraph("src/main/resources/MVC/Model/doesntexist.txt"));
     }
 }

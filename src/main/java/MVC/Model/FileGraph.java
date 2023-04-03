@@ -14,11 +14,11 @@ import java.util.regex.Pattern;
 public class FileGraph implements Model {
     private final GraphADT<Point> graph;
     private final StepGraph<Point> stepGraph;
-    public FileGraph(String filename) {
+    public FileGraph(String filepath) {
         graph = new ALGraph<>();
         BufferedReader input;
         try {
-            input = new BufferedReader(new FileReader(filename));
+            input = new BufferedReader(new FileReader(filepath));
             final Pattern p = Pattern.compile("^([0-9]+) ([0-9]+) \\{'weight': ([0-9]+)}");
             String line = input.readLine();
 

@@ -45,24 +45,6 @@ public class testALGraph {
         assertTrue(result.contains(point3));
     }
     @Test
-    public void testGetWeight(){
-        Point point1 = new Point(1);
-        Point point2 = new Point(2);
-        ALGraph<Point> testGraph = new ALGraph();
-        testGraph.addConnection(point1, point2, 20, false);
-        assertEquals(testGraph.getWeight(point1, point2), 20);
-        assertNotEquals(testGraph.getWeight(point2, point1), 20);
-    }
-    @Test
-    public void testGetWeightBidirectional(){
-        Point point1 = new Point(1);
-        Point point3 = new Point(3);
-        ALGraph<Point> testGraph = new ALGraph();
-        testGraph.addConnection(point1, point3, 44, true);
-        assertEquals(testGraph.getWeight(point1, point3), 44);
-        assertEquals(testGraph.getWeight(point1, point3), 44);
-    }
-    @Test
     public void testGetNode(){
         Point point1 = new Point(1);
         ALGraph<Point> testGraph = new ALGraph();

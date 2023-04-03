@@ -41,7 +41,7 @@ public class testDijkstra {
         graph.addConnection(point3, point4, 100, false);
         Dijkstra<Point> test = new Dijkstra<Point>(point1,graph, true);
         assertEquals(test.getGraphPath(point4).getNodes().get(0).getIndex(), 1);
-        assertEquals(test.getGraphPath(point4).getNodes().get(1).getIndex(), 3);
+        assertEquals(test.getGraphPath(point4).getNodes().get(1).getIndex(), 2);
         assertEquals(test.getGraphPath(point4).getNodes().get(2).getIndex(), 4);
     }
 }

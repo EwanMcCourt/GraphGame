@@ -42,10 +42,6 @@ public class testStepGraph {
         ALgraph.addConnection(p2, p10, 15, true);
         StepGraph<Point> graph = new StepGraph<>(ALgraph);
         GraphPath<Point> result = graph.getPathBySize(3);
-        System.out.println(result.getNodes());
-        System.out.println(result.getNodes().get(0).getIndex());
-        System.out.println(result.getNodes().get(1).getIndex());
-        System.out.println(result.getNodes().get(2).getIndex());
         assertEquals(result.getNodes().get(0).getIndex(), 1);
         assertEquals(result.getNodes().get(1).getIndex(), 2);
         assertEquals(result.getNodes().get(2).getIndex(), 10);

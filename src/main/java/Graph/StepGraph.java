@@ -27,9 +27,6 @@ public class StepGraph<N extends Node<N>> {
                 pathLength[i][j] = result;
             }
         }
-        for (int[] ints : pathLength) {
-            System.out.println(Arrays.toString(ints));
-        }
     }
 
     public GraphPath<N> getPathBySize(int size) {

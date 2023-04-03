@@ -40,10 +40,6 @@ public class testDijkstra {
         graph.addConnection(point3, point4, 3, false);
         graph.addConnection(point4, point5, 3, true);
         Dijkstra<Point> test = new Dijkstra<>(point1,graph, true);
-        for (Point point : test.getGraphPath(point3).getNodes()) {
-            System.out.println(point.getIndex());
-        }
-
         assertEquals(test.getGraphPath(point5).getNodes().get(0).getIndex(), 1);
         assertEquals(test.getGraphPath(point5).getNodes().get(1).getIndex(), 4);
         assertEquals(test.getGraphPath(point5).getNodes().get(2).getIndex(), 5);

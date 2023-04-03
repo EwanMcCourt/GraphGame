@@ -54,7 +54,7 @@ public class StepGraph<N extends Node<N>> {
         ArrayList<N> list = new ArrayList<>(graph.getNodes());
 
         for (int i = 0; i < pathLength.length; i++) {
-            for (int j = i; j < pathLength.length; j++) {
+            for (int j = 0; j < pathLength.length; j++) {
                 if (pathLength[i][j] == size) {
                     candidates.add(dijkstras.get(list.get(i)).getGraphPath(list.get(j)));
                 }

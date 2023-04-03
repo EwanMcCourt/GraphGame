@@ -22,6 +22,7 @@ public class DisplayNode extends Group {
         this.point = point;
         this.anchorX = anchorX;
         this.anchorY = anchorY;
+        double HIGHLIGHT_SCALE_FACTOR = 1.1;
 
         StackPane pane = new StackPane();
         pane.setPickOnBounds(false);
@@ -30,12 +31,12 @@ public class DisplayNode extends Group {
         pane.layoutYProperty().bind(centreY.subtract(pane.heightProperty().divide(2)));
 
         highlightCircle = new Circle();
-        highlightCircle.radiusProperty().bind(radius.multiply(1.1));
+        highlightCircle.radiusProperty().bind(radius.multiply(HIGHLIGHT_SCALE_FACTOR));
         highlightCircle.setVisible(false);
         pane.getChildren().add(highlightCircle);
 
         tempHighlightCircle = new Circle();
-        tempHighlightCircle.radiusProperty().bind(radius.multiply(1.1));
+        tempHighlightCircle.radiusProperty().bind(radius.multiply(HIGHLIGHT_SCALE_FACTOR));
         tempHighlightCircle.setVisible(false);
         pane.getChildren().add(tempHighlightCircle);
 

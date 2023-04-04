@@ -19,6 +19,7 @@ public class FileGraph implements Model {
         BufferedReader input;
         try {
             input = new BufferedReader(new FileReader(filepath));
+            // Regex to interpret the provided txt file of connections.
             final Pattern p = Pattern.compile("^([0-9]+) ([0-9]+) \\{'weight': ([0-9]+)}");
             String line = input.readLine();
             if (line == null) {
@@ -27,7 +28,12 @@ public class FileGraph implements Model {
 
             while (line != null) {
                 Matcher m = p.matcher(line);
+                // for "1 5 {'weight': 3}"
+                // "1" would be matched in m.group(1)
+                // "5" would be matched in m.group(2)
+                // "3" would be matched in m.group(3)
                 if (m.find()) {
+                    // Check if source and target indexes  are already on the graph, if not create new Points.
                     Point source;
                     if(graph.getNode(Integer.parseInt(m.group(1))) == null) {
                         source = new Point(Integer.parseInt(m.group(1)));

@@ -2,12 +2,14 @@ package Graph;
 
 import java.util.*;
 
+// StepGraph is used to determine the longest optimal path and finding a random optimal path by path length.
 public class StepGraph<N extends Node<N>> {
     private final GraphADT<N> graph;
     private final Map<N, Dijkstra<N>> dijkstras = new HashMap<>();
     private final int[][] pathLength;
     private int maxLength = 0;
 
+    // Create a StepGraph on a GraphADT graph which uses Dijkstra to map the shortest path from every node to every other nodes and stores those distances.
     public StepGraph (GraphADT<N> graph) {
         this.graph = graph;
         pathLength = new int[graph.getNodes().size()][graph.getNodes().size()];
@@ -29,6 +31,7 @@ public class StepGraph<N extends Node<N>> {
         }
     }
 
+    // Returns a random optimal path of a specified size, if none are found the pool of candidates is widened by 1 in both directions until one is found.
     public GraphPath<N> getPathBySize(int size) {
         int upper = size, lower = size;
         ArrayList<GraphPath<N>> candidates;
@@ -48,6 +51,7 @@ public class StepGraph<N extends Node<N>> {
         return candidates.get(new Random().nextInt(candidates.size()));
     }
 
+    // Returns all optimal paths of a specified size, returning an empty list if none are found.
     private ArrayList<GraphPath<N>> getPathSizeCandidates(int size) {
         ArrayList<GraphPath<N>> candidates = new ArrayList<>();
         ArrayList<N> list = new ArrayList<>(graph.getNodes());
@@ -63,6 +67,7 @@ public class StepGraph<N extends Node<N>> {
         return candidates;
     }
 
+    // Return the size of the longest optimal path.
     public int getMaxLength() {
         return maxLength;
     }

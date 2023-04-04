@@ -7,7 +7,6 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.QuadCurve;
 
 import java.util.*;
@@ -29,7 +28,6 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         @Override
         protected double computeValue() {return 1.0 / (2.0 * (1.0 + (1.0 / Math.sin(Math.PI / numNodes.getValue()))));}
     };
-    private final static double CENTRE_POINT_RADIUS_SCALE_FACTOR = 0.2;
     public DisplayGraph(SimpleDoubleProperty width, SimpleDoubleProperty height) {
         int minimumSize = 400;
         this.prefWidthProperty().bind(Bindings.max(width,minimumSize));
@@ -54,13 +52,6 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         SimpleDoubleProperty nodeRadius = new SimpleDoubleProperty();
         nodeRadius.bind(Bindings.min(this.widthProperty(), this.heightProperty()).multiply(NODE_RADIUS_BOUNDARY).multiply(NODE_RADIUS_SCALE_FACTOR).multiply(RING_RADIUS_SCALE_FACTOR));
 
-        Circle centrePoint = new Circle();
-        centrePoint.centerXProperty().bind(centreX);
-        centrePoint.centerYProperty().bind(centreY);
-        centrePoint.radiusProperty().bind(nodeRadius.multiply(CENTRE_POINT_RADIUS_SCALE_FACTOR));
-        centrePoint.setFill(Color.ORANGE);
-//        this.getChildren().add(centrePoint);
-
         Iterator<Point> pointIterator = points.iterator();
 
         if(points.size() == 1) {
@@ -73,7 +64,7 @@ public class DisplayGraph extends Pane implements GraphDisplay {
         } else {
             for(int i=0; i< points.size(); i++) {
                 // https://math.stackexchange.com/questions/4459356/find-n-evenly-spaced-points-on-circle-with-radius-r
-//                double theta = (i*((2*Math.PI)/points.size()))-(Math.PI/2);
+                // Evenly space all nodes in a circle around a centre point.
                 double theta = (i*((2*Math.PI)/points.size()));
                 SimpleDoubleProperty nodeCentreX = new SimpleDoubleProperty();
                 SimpleDoubleProperty nodeCentreY = new SimpleDoubleProperty();
@@ -82,6 +73,7 @@ public class DisplayGraph extends Pane implements GraphDisplay {
 
                 // https://math.stackexchange.com/questions/2045174/how-to-find-a-point-between-two-points-with-given-distance
                 // https://stackoverflow.com/questions/34270380/bind-property-to-cosine-javafx
+                // Create bindings for the X and Y coordinates foe the anchor point for connections between this node and others.
                 DoubleBinding nodeAnchorXBinding = new DoubleBinding() {
                     {
                         bind(centreX);
@@ -97,7 +89,6 @@ public class DisplayGraph extends Pane implements GraphDisplay {
                         double d = nodeRadius.get();
 
                         return x1 + ((d/D)*(x2-x1));
-//                        return centreX.get() + ((radius.get()-nodeRadius.get()))*Math.cos(Math.acos((centreX.get()-nodeCentreX.get())/radius.get()));
                     }
                 };
                 DoubleBinding nodeAnchorYBinding = new DoubleBinding() {
@@ -115,7 +106,6 @@ public class DisplayGraph extends Pane implements GraphDisplay {
                         double d = nodeRadius.get();
 
                         return y1 + ((d/D)*(y2-y1));
-//                        return centreY.get() + ((radius.get()-nodeRadius.get()))*Math.cos(Math.acos((centreY.get()-nodeCentreY.get())/radius.get()));
                     }
                 };
 
@@ -146,16 +136,13 @@ public class DisplayGraph extends Pane implements GraphDisplay {
     public void addConnection(Point point1, Point point2, int weight) {
         QuadCurve curve = createCurve(point1, point2);
 
-        curve.setFill(Color.TRANSPARENT);
         curve.setStroke(getWeightColor(weight));
 
         QuadCurve highlightCurve = createCurve(point1, point2);
-        highlightCurve.setFill(Color.TRANSPARENT);
         highlightCurve.setStrokeWidth(5.0);
         highlightCurve.setVisible(false);
 
         QuadCurve tempHighlightCurve = createCurve(point1, point2);
-        tempHighlightCurve.setFill(Color.TRANSPARENT);
         tempHighlightCurve.setStrokeWidth(5.0);
         tempHighlightCurve.setVisible(false);
 
@@ -175,6 +162,8 @@ public class DisplayGraph extends Pane implements GraphDisplay {
 
         curve.endXProperty().bind(displayNodes.get(point2).getAnchorX());
         curve.endYProperty().bind(displayNodes.get(point2).getAnchorY());
+
+        curve.setFill(Color.TRANSPARENT);
 
         return curve;
     }

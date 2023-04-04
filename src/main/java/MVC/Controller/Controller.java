@@ -37,15 +37,16 @@ public class Controller {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        view.addMenuButton("Start", e -> start());
-        view.addMenuButton("Stop", e -> stop());
         view.addDifficultyEventListener((observableValue, number, t1) -> setGameDifficulty(t1));
         view.setMaxDifficulty(model.getMaxPathLength());
-        view.populateLeaderboard(model.getTopTenPlayers());
+        view.addMenuButton("Start", e -> start());
+        view.addMenuButton("Stop", e -> stop());
         view.addLeaderboardButton("Login", e -> login(loginInput));
         view.addLeaderboardTextField((observableValue, oldValue, newValue) -> loginInput = newValue);
         view.addLeaderboardButton("Register", e -> register(registerInput));
         view.addLeaderboardTextField((observableValue, oldValue, newValue) -> registerInput = newValue);
+
+        view.populateLeaderboard(model.getTopTenPlayers());
 
         populateGraph();
     }
@@ -77,7 +78,6 @@ public class Controller {
         gameOngoing = false;
         view.clearHighlights();
         view.clearPathView();
-
     }
     private void finishGame() {
         view.showPathView(selectedPath, "Your Path:");
@@ -92,6 +92,11 @@ public class Controller {
 
     }
     private int getScore() {
+        // Score is calculated using deductions from a perfect game, finding the optimal path on the highest difficulty gets you 1000 points
+        // For any given difficulty the max score is (1000 * (current difficulty - minimum difficulty)) / (max difficulty - minimum difficulty).
+        // Finding the optimal path on difficulty 5 out of a max difficulty of 10 gives 500 points if the minimum difficulty is 1.
+        // For this game the minimum difficulty is 3 as any less the game is either trivial, or already completed from the start.
+        // For non-optimal paths the score is inversely proportional to the difference between the non-optimal path and the optimal.
         Double difference = Double.max(selectedPath.getWeight() - optimalPath.getWeight(), 0);
         return Integer.max((int) (round((1-(difference/optimalPath.getWeight())) * ((double) (gameDifficulty - 2) / (double) (model.getMaxPathLength() - 2))*1000)),0);
     }

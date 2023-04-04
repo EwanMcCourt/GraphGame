@@ -21,7 +21,7 @@ public class Controller {
     private Point source;
     private Point target;
     private Boolean gameOngoing = false;
-    private int difficulty = 3;
+    private int difficulty = 3, gameDifficulty = difficulty;
     private String loginInput, registerInput;
     private Player player;
     public Controller(View view, Model model) {
@@ -39,7 +39,7 @@ public class Controller {
         }
         view.addMenuButton("Start", e -> start());
         view.addMenuButton("Stop", e -> stop());
-        view.addDifficultyEventListener((observableValue, number, t1) -> setDifficulty(t1));
+        view.addDifficultyEventListener((observableValue, number, t1) -> setGameDifficulty(t1));
         view.setMaxDifficulty(model.getMaxPathLength());
         view.populateLeaderboard(model.getTopTenPlayers());
         view.addLeaderboardButton("Login", e -> login(loginInput));
@@ -51,12 +51,13 @@ public class Controller {
     }
     private void start(){
         gameOngoing = true;
+        gameDifficulty = difficulty;
 
         // Clear Previous Game
         view.clearHighlights();
 
         // Pick Random Start And End Based On Difficulty
-        optimalPath = model.getRandomPathBySize(difficulty);
+        optimalPath = model.getRandomPathBySize(gameDifficulty);
         source = optimalPath.getFirst();
         target = optimalPath.getLast();
 
@@ -92,11 +93,9 @@ public class Controller {
     }
     private int getScore() {
         Double difference = Double.max(selectedPath.getWeight() - optimalPath.getWeight(), 0);
-        return Integer.max((int) (round((1-(difference/optimalPath.getWeight())) * ((double) (difficulty - 2) / (double) (model.getMaxPathLength() - 2))*1000)),0);
+        return Integer.max((int) (round((1-(difference/optimalPath.getWeight())) * ((double) (gameDifficulty - 2) / (double) (model.getMaxPathLength() - 2))*1000)),0);
     }
     private void login(String givenUsername) {
-
-
         player = model.loadPlayer(givenUsername);
         if (player == null){
             view.showErrorAlert("Input not valid", "This user does not exist. If you want to create a new user, please register.");
@@ -118,7 +117,7 @@ public class Controller {
             view.showInformationAlert("Registration Successful", "You have now registered the account: " + givenUsername);
         }
     }
-    private void setDifficulty(Number difficultyNumber) {
+    private void setGameDifficulty(Number difficultyNumber) {
         int difficulty = difficultyNumber.intValue();
         if (this.difficulty != difficulty) {
             this.difficulty = difficulty;

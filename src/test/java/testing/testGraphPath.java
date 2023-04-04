@@ -11,9 +11,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class testGraphPath {
-
-
-
     @Test
     public void testGetNodes(){
         LinkedList<Point> list = new LinkedList<>();

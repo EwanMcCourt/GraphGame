@@ -9,16 +9,11 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class testPoint {
-
-
-
     @Test
     public void testGetWeightWithoutConnection(){
         Point testPoint = new Point(1);
         Point testPoint2 = new Point(2);
         assertEquals(testPoint.getWeight(testPoint2),  Double.POSITIVE_INFINITY, 0);
-
-
     }
     @Test
 

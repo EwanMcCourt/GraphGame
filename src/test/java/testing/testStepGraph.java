@@ -22,7 +22,7 @@ public class testStepGraph {
         result = graph2.getMaxLength();
         assertEquals(result, 1);
     }
-    @Test //not working rn: runs forever
+    @Test
     public void testGetPathBySizeWhenEmpty(){
         ALGraph<Point> ALgraph = new ALGraph<>();
         StepGraph<Point> graph1 = new StepGraph<>(ALgraph);

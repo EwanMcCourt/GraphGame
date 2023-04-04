@@ -11,16 +11,12 @@ public class testPlayer {
     final Player testPlayer2 = new Player("test2", 0);
     @Test
     public void TestEquals(){
-
         assertTrue(testPlayer.equals(testPlayer));
         assertFalse(testPlayer.equals(testPlayer2));
-
-
     }
     @Test
     public void TestGetUsername() {
         assertEquals(testPlayer.getUsername(), "test");
-
     }
     @Test
     public void TestToString() {

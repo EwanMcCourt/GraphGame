@@ -105,6 +105,10 @@ public class Controller {
         }
     }
     private void register(String givenUsername) {
+        if(givenUsername == null){
+            view.showErrorAlert("Username cannot be blank", "Please enter a username before registering.");
+            return;
+        }
         givenUsername = givenUsername.replaceAll("\\s+",""); //formats the input for consistency and to reduce errors
 
         if (model.loadPlayers().contains(model.loadPlayer(givenUsername)) || givenUsername.isEmpty()){

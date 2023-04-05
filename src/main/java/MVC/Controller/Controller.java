@@ -101,6 +101,11 @@ public class Controller {
         return Integer.max((int) (round((1-(difference/optimalPath.getWeight())) * ((double) (gameDifficulty - 2) / (double) (model.getMaxPathLength() - 2))*1000)),0);
     }
     private void login(String givenUsername) {
+        if (givenUsername == null || givenUsername.strip().equals("")) {
+            view.showErrorAlert("Username cannot be blank", "Please enter a username before logging in.");
+            return;
+        }
+
         player = model.loadPlayer(givenUsername);
         if (player == null){
             view.showErrorAlert("Input not valid", "This user does not exist. If you want to create a new user, please register.");
@@ -109,7 +114,7 @@ public class Controller {
         }
     }
     private void register(String givenUsername) {
-        if(givenUsername == null){
+        if(givenUsername == null|| givenUsername.strip().equals("")){
             view.showErrorAlert("Username cannot be blank", "Please enter a username before registering.");
             return;
         }

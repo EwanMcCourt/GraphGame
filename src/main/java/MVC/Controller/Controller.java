@@ -33,7 +33,7 @@ public class Controller {
         view.initialise();
         view.setTitle("Group 29");
         try {
-            view.setIcon("src/main/resources/MVC/View/icon.png");
+            view.setIcon("icon.png");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -88,8 +88,8 @@ public class Controller {
             player.updateHighScore(getScore());
             savePlayers();
         }
-
-
+        view.clearLeaderboard();
+        view.populateLeaderboard(model.getTopTenPlayers());
     }
     private int getScore() {
         // Score is calculated using deductions from a perfect game, finding the optimal path on the highest difficulty gets you 1000 points

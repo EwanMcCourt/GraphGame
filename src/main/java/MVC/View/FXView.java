@@ -16,8 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.List;
 import java.util.function.Consumer;
@@ -54,7 +53,6 @@ public class FXView implements View{
         leaderboardTextArea.setEditable(false);
         leaderboardTextArea.setMouseTransparent(true);
         leaderboardTextArea.setFocusTraversable(false);
-        leaderboardTextArea.appendText("LEADERBOARD:");
         leaderboardTextArea.setPrefSize(5,500);//change to dynamically size
         leaderboardTextArea.setMaxWidth(200);
         leaderboardTextArea.setMaxHeight(500);
@@ -99,9 +97,8 @@ public class FXView implements View{
         stage.show();
     }
     @Override // Set Application Icon
-    public void setIcon(String filename) throws IOException {
-        FileInputStream inputStream = new FileInputStream(filename);
-        Image icon = new Image(inputStream);
+    public void setIcon(String filename) {
+        Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream(filename)));
         stage.getIcons().add(icon);
     }
     @Override // Set Application Title
@@ -114,6 +111,7 @@ public class FXView implements View{
     }
     @Override
     public void populateLeaderboard(List<String> topPlayers) {
+        leaderboardTextArea.appendText("LEADERBOARD:");
         for (String topPlayer : topPlayers) {
             leaderboardTextArea.appendText("\n" + topPlayer);
         }
@@ -174,10 +172,10 @@ public class FXView implements View{
         graph.setTempHighlightColor(point, NodeColour.CURRENT);
         graph.tempHighlight(point, true);
         for (Point neighbour : point.getNeighbours()) {
-                graph.setTempConnectionHighlightColor(point, neighbour, ConnectionColour.CURRENT);
-                graph.setTempHighlightColor(neighbour, NodeColour.CURRENT);
-                graph.tempHighlightConnection(point, neighbour, true);
-                graph.tempHighlight(neighbour, true);
+            graph.setTempConnectionHighlightColor(point, neighbour, ConnectionColour.CURRENT);
+            graph.setTempHighlightColor(neighbour, NodeColour.CURRENT);
+            graph.tempHighlightConnection(point, neighbour, true);
+            graph.tempHighlight(neighbour, true);
         }
     }
     @Override

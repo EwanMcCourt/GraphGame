@@ -14,8 +14,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         View view = new FXView(stage);
-//        Model model = new FileGraph("src/main/resources/MVC/Model/pointssmall.txt");
-        Model model = new FileGraph("src/main/resources/MVC/Model/points.txt");
+        Model model = new FileGraph("points.txt");
         new Controller(view, model);
     }
 }

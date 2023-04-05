@@ -1,13 +1,20 @@
 package MVC.Model;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.*;
 
 public class Leaderboard{
     private static final List<Player> leaderboard = new ArrayList<>();
+    private static final File file;
 
-    private static final File file = new File("src/main/resources/MVC/Model/leaderboard.txt");
-
+    static {
+        try {
+            file = new File(Objects.requireNonNull(Leaderboard.class.getResource("leaderboard.txt")).toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static void addPlayer(String givenUsername) {
         Leaderboard.loadPlayers();
@@ -22,12 +29,12 @@ public class Leaderboard{
 
 
 
-                //Checks if players file is empty before writing to a new line
-                if (line == null) {
-                    writing.append(givenUsername).append(" ").append(String.valueOf(0));
-                } else {
-                    writing.append("\n").append(givenUsername).append(" ").append(String.valueOf(0));
-                }
+            //Checks if players file is empty before writing to a new line
+            if (line == null) {
+                writing.append(givenUsername).append(" ").append(String.valueOf(0));
+            } else {
+                writing.append("\n").append(givenUsername).append(" ").append(String.valueOf(0));
+            }
 
 
 
@@ -125,9 +132,4 @@ public class Leaderboard{
 
         return playerInfo;
     }
-
-
-
-
-
 }
